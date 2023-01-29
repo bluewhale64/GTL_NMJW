@@ -1,11 +1,13 @@
+#version 330 core
 in vec2 UV_coords;
 in vec2 UV_dismap;
-in int v_texnum;
-in int v_disnum;
+in flat int v_texnum;
+in flat int v_disnum;
 out vec4 colour;
 uniform sampler2D u_texarray[32];
 void main(){
-  float displacement = texture(u_texarray[v_disnum], UV_dismap).g -0.5;
+  float grey = texture(u_texarray[v_disnum], UV_dismap).g -0.5;
+  vec2 disp = vec2(grey, grey);
   //black decreases UV, white increases UV
-  colour = texture(u_texarray[v_texnum], (UV_coords + displacement));
+  colour = texture(u_texarray[v_texnum], (UV_coords + disp));
 }

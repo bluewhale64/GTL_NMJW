@@ -205,9 +205,19 @@ public:
 };
 
 class DispModel : public Model {
+private:
+    unsigned int vertnum;
+    float scroll_x1;
+    float scroll_y1;
+    float scroll_x2;
+    float scroll_y2;
 public:
-    DispModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp) : Model(vertices_in, number_of_vertices, indices_in, number_of_indices, texturearray, number_of_textures, modelshader, mvp) {
-        ;
+    DispModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp, float x1, float y1, float x2, float y2) : Model(vertices_in, number_of_vertices, indices_in, number_of_indices, texturearray, number_of_textures, modelshader, mvp) {
+        scroll_x1 = x1;
+        scroll_y1 = y1;
+        scroll_x2 = x2;
+        scroll_y2 = y2;
+        vertnum = number_of_vertices / 9;
     }
     void draw() override {
         for (uint8_t i = 0; i < texnum; i++) {
@@ -239,6 +249,15 @@ public:
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
         glDisableVertexAttribArray(3);
+
+        //Scroll the texture coordinates
+        for (unsigned int i = 0; i < vertnum; i++) {
+            vertices[(9*i)+3] += scroll_x1;
+            vertices[(9*i)+4] += scroll_y1;
+            vertices[(9*i)+5] += scroll_x2;
+            vertices[(9*i)+6] += scroll_y2;
+        }
+        floatbuffer(GL_ARRAY_BUFFER, 1, &vertexbuffer, vertices, vertnum * sizeof(float) * 9);
     }
     ~DispModel() override {}
 };

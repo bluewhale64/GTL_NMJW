@@ -59,17 +59,23 @@ int main(void) {
     Texture* testpics[] = { &BWH };
     Model NHM(testcorners, 24, testindices, 6, testpics, 1, &TXS, &mvp);
 
-    /*
-    Texture DPM("textures/64x64_dpmp.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
+    Texture BLK("textures/OldFSS02.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
+    Texture DPM("textures/OldFSS00.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
     Shader DPT("shaders/displacement.vertex", "shaders/displacement.fragment");
-    Texture* testex[] = {&BWH, &DPM};
-    DispModel Test(testcs, 36, testindices, 6, testex, 2, &DPT, &mvp);
-    */
+    Texture* testex[] = {&BLK, &DPM};
+    float testcs[] = {
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
+        -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0, 1,
+         1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0, 1,
+         1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0, 1
+    };
+    DispModel Test(testcs, 36, testindices, 6, testex, 2, &DPT, &mvp, 0.001, 0.001, 0, 0);
+    
 
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        NHM.draw();
+        Test.draw();
         glfwSwapBuffers(render.window);
         glfwPollEvents();
         computeMatricesFromInputs(render.window, width, height, aspect);
