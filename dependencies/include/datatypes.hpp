@@ -95,7 +95,7 @@ class Texture
 {
 public:
     GLuint texture;
-    Texture(const char* imagefile, GLint texture_mag_filter, GLint texture_min_filter, GLint texture_wrap_s, GLint texture_wrap_t) {
+    Texture(const char* imagefile, GLint texture_mag_filter, GLint texture_min_filter, GLint texture_wrap_s, GLint texture_wrap_t, float* border_colour) {
         int width, height, bpp;
         stbi_set_flip_vertically_on_load(1);
         unsigned char* localbuffer = stbi_load(imagefile, &width, &height, &bpp, 4);
@@ -109,6 +109,13 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture_min_filter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, texture_wrap_s);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, texture_wrap_t);
+        if ((texture_wrap_s == GL_CLAMP_TO_EDGE || texture_wrap_t == GL_CLAMP_TO_EDGE) && border_colour != nullptr) {
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border_colour);
+        }
+        else if (texture_wrap_s == GL_CLAMP_TO_EDGE || texture_wrap_t == GL_CLAMP_TO_EDGE) {
+            float border[4] = { 0,0,0,0 };
+            glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
+        }
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localbuffer);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -131,7 +138,7 @@ public:
 };
 
 class Model {
-private:
+protected:
     float* vertices;
     unsigned int* indices;
     unsigned int indexnum;
@@ -167,7 +174,7 @@ public:
         unsignedintbuffer(GL_ELEMENT_ARRAY_BUFFER, 1, &indexbuffer, indices, number_of_indices * sizeof(float));
         
     }
-    void draw() {
+    virtual void draw() {
         for (uint8_t i = 0; i < texnum; i++) {
             glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, textures[i]);
@@ -194,7 +201,46 @@ public:
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
     }
-    ~Model() {}
+    virtual ~Model() {}
+};
+
+class DispModel : public Model {
+public:
+    DispModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp) : Model(vertices_in, number_of_vertices, indices_in, number_of_indices, texturearray, number_of_textures, modelshader, mvp) {
+        ;
+    }
+    void draw() override {
+        for (uint8_t i = 0; i < texnum; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, textures[i]);
+        }
+        glUseProgram(shader);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
+
+        glUniformMatrix4fv(matloc, 1, GL_FALSE, MVP);
+        glUniform1iv(arrayloc, texnum, samplers);
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(0 * sizeof(float)));
+
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
+
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
+
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(8 * sizeof(float)));
+
+        glDrawElements(GL_TRIANGLES, indexnum, GL_UNSIGNED_INT, (void*)0);
+
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+        glDisableVertexAttribArray(3);
+    }
+    ~DispModel() override {}
 };
 
 class Renderer {
@@ -242,22 +288,13 @@ public:
             glfwSetCursorPos(window, width / 2, height / 2);
             // Enable depth test
             glEnable(GL_DEPTH_TEST);
-            // Accept fragment if it closer to the camera than the former one
             glDepthFunc(GL_LESS);
+
+            glFrontFace(GL_CCW);
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
         }
     ~Renderer() {
         free(window);
     }
-    /*
-    void draw(TextureQuad* quad, Shader* shader, Texture* texture, unsigned int slot, glm::mat4 mvp) {
-        glUseProgram(shader->program);
-        texture->bindtexture(slot);
-        shader->setuniform1i("u_texture", slot);
-        shader->setuniformmat4f("u_MVP", mvp);
-        glBindVertexArray(quad->vao);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quad->ibo);
-        glDrawElements(GL_TRIANGLES, (sizeof(quad->indices) / sizeof(quad->indices[0])), GL_UNSIGNED_INT, nullptr);
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    }
-    */
 };
