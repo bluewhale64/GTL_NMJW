@@ -6,8 +6,8 @@ in flat int v_disnum;
 out vec4 colour;
 uniform sampler2D u_texarray[32];
 void main(){
-  float grey = texture(u_texarray[v_disnum], UV_dismap).g -0.5;
+  vec4 clr = texture(u_texarray[v_disnum], UV_dismap);
+  float grey = ((clr.g + clr.g + clr.g) / 3) -0.5;
   vec2 disp = vec2(grey, grey);
-  //black decreases UV, white increases UV
-  colour = texture(u_texarray[v_texnum], (UV_coords + disp));
+  colour = texture(u_texarray[int(v_texnum)], (UV_coords + disp));
 }

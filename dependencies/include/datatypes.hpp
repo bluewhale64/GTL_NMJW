@@ -238,17 +238,13 @@ public:
         glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
 
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
-
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(8 * sizeof(float)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
 
         glDrawElements(GL_TRIANGLES, indexnum, GL_UNSIGNED_INT, (void*)0);
 
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
         glDisableVertexAttribArray(2);
-        glDisableVertexAttribArray(3);
 
         //Scroll the texture coordinates
         for (unsigned int i = 0; i < vertnum; i++) {
@@ -256,6 +252,7 @@ public:
             vertices[(9*i)+4] += scroll_y1;
             vertices[(9*i)+5] += scroll_x2;
             vertices[(9*i)+6] += scroll_y2;
+            //Possibility of float overflow, but will only happen after a long time and will quickly snap back to normal.
         }
         floatbuffer(GL_ARRAY_BUFFER, 1, &vertexbuffer, vertices, vertnum * sizeof(float) * 9);
     }

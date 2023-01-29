@@ -61,16 +61,21 @@ int main(void) {
 
     Texture BLK("textures/OldFSS02.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
     Texture DPM("textures/OldFSS00.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
+
+    Texture GND("textures/cobble_stone.jpg", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
+    Texture DM0("textures/512x512_mii.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
+
     Shader DPT("shaders/displacement.vertex", "shaders/displacement.fragment");
-    Texture* testex[] = {&BLK, &DPM};
+    Texture* testex[] = {&GND, &BLK};
     float testcs[] = {
         -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
-        -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0, 1,
-         1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0, 1,
-         1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0, 1
+        -1.0f,  1.0f, 0.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0, 1,
+         1.0f,  1.0f, 0.0f, 1.3f, 1.3f, 1.0f, 1.0f, 0, 1,
+         1.0f, -1.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0.0f, 0, 1
     };
-    DispModel Test(testcs, 36, testindices, 6, testex, 2, &DPT, &mvp, 0.001, 0.001, 0, 0);
-    
+    DispModel Test(testcs, 36, testindices, 6, testex, 2, &DPT, &mvp, 0.0005, 0.0007, 0.0000, 0.000);
+    //Texture is currently being used as its own displacement map - BUG
+    //either in shader or dismodel.draw
 
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

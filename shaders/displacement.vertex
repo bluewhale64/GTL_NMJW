@@ -1,17 +1,16 @@
 #version 330 core
 layout(location = 0) in vec3 vertexPosition_modelspace;
 layout(location = 1) in vec4 UV;
-layout(location = 2) in float texnum;
-layout(location = 3) in float disnum;
+layout(location = 2) in vec2 texdisind;
 uniform mat4 MVP;
 out vec2 UV_coords;
 out vec2 UV_dismap;
-out int v_texnum;
-out int v_disnum;
+out flat int v_texnum;
+out flat int v_disnum;
 void main(){
     gl_Position =  MVP * vec4(vertexPosition_modelspace,1);
     UV_coords = UV.xy;
     UV_dismap = UV.zw;
-    v_texnum = int(texnum);
-    v_disnum = int(disnum);
+    v_texnum = int(texdisind.x);
+    v_disnum = int(texdisind.y);
 }
