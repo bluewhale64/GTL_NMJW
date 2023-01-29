@@ -6,8 +6,7 @@ in flat int v_disnum;
 out vec4 colour;
 uniform sampler2D u_texarray[32];
 void main(){
-  vec4 clr = texture(u_texarray[v_disnum], UV_dismap);
-  float grey = ((clr.g + clr.g + clr.g) / 3) -0.5;
-  vec2 disp = vec2(grey, grey);
+  vec4 dmp = texture(u_texarray[v_disnum], UV_dismap);
+  vec2 disp = vec2(dmp.r, dmp.g);
   colour = texture(u_texarray[int(v_texnum)], (UV_coords + disp));
 }

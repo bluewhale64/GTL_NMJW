@@ -63,24 +63,34 @@ int main(void) {
     Texture DPM("textures/OldFSS00.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
 
     Texture GND("textures/cobble_stone.jpg", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
-    Texture DM0("textures/512x512_mii.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
-
+    
+    Texture DM0("textures/dmp3.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
+    Texture DM1("textures/dmp4.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
     Shader DPT("shaders/displacement.vertex", "shaders/displacement.fragment");
-    Texture* testex[] = {&GND, &BLK};
-    float testcs[] = {
+    Texture* testex1[] = {&GND, &DM0};
+    Texture* testex2[] = {&GND, &DM1};
+    float testcs1[] = {
         -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
         -1.0f,  1.0f, 0.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0, 1,
          1.0f,  1.0f, 0.0f, 1.3f, 1.3f, 1.0f, 1.0f, 0, 1,
          1.0f, -1.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0.0f, 0, 1
     };
-    DispModel Test(testcs, 36, testindices, 6, testex, 2, &DPT, &mvp, 0.0005, 0.0007, 0.0000, 0.000);
+    float testcs2[] = {
+         1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
+         1.0f,  1.0f, 0.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0, 1,
+         3.0f,  1.0f, 0.0f, 1.3f, 1.3f, 1.0f, 1.0f, 0, 1,
+         3.0f, -1.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0.0f, 0, 1
+    };
+    DispModel Test1(testcs1, 36, testindices, 6, testex1, 2, &DPT, &mvp, 0.0005, 0.0007, 0.0000, 0.000);
+    DispModel Test2(testcs2, 36, testindices, 6, testex2, 2, &DPT, &mvp, 0.0005, 0.0007, 0.0000, 0.000);
     //Texture is currently being used as its own displacement map - BUG
     //either in shader or dismodel.draw
 
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        Test.draw();
+        Test1.draw();
+        Test2.draw();
         glfwSwapBuffers(render.window);
         glfwPollEvents();
         computeMatricesFromInputs(render.window, width, height, aspect);
