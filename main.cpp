@@ -66,9 +66,13 @@ int main(void) {
     
     Texture DM0("textures/dmp3.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
     Texture DM1("textures/dmp4.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
+
+    Texture DM5("textures/dmp5.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
+    Texture DM6("textures/dmp6.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
+
     Shader DPT("shaders/displacement.vertex", "shaders/displacement.fragment");
-    Texture* testex1[] = {&GND, &DM0};
-    Texture* testex2[] = {&GND, &DM1};
+    Texture* testex1[] = {&GND, &DM5};
+    Texture* testex2[] = {&GND, &DM6};
     float testcs1[] = {
         -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
         -1.0f,  1.0f, 0.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0, 1,
@@ -81,8 +85,8 @@ int main(void) {
          3.0f,  1.0f, 0.0f, 1.3f, 1.3f, 1.0f, 1.0f, 0, 1,
          3.0f, -1.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0.0f, 0, 1
     };
-    DispModel Test1(testcs1, 36, testindices, 6, testex1, 2, &DPT, &mvp, 0.0005, 0.0007, 0.0000, 0.000);
-    DispModel Test2(testcs2, 36, testindices, 6, testex2, 2, &DPT, &mvp, 0.0005, 0.0007, 0.0000, 0.000);
+    DispModel Test1(testcs1, 36, testindices, 6, testex1, 2, &DPT, &mvp, 0.0000, 0.00070, 0.0008, 0.008);
+    DispModel Test2(testcs2, 36, testindices, 6, testex2, 2, &DPT, &mvp, 0.0000, 0.00070, 0.0008, 0.000);
     //Texture is currently being used as its own displacement map - BUG
     //either in shader or dismodel.draw
 
