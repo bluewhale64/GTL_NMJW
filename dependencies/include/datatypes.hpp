@@ -21,7 +21,7 @@ public:
     void unbind() {
         glUseProgram(0);
     }
-    GLint getuniformlocation(const char *uniformname) {
+    GLint getuniformlocation(const char* uniformname) {
         GLint location = glGetUniformLocation(program, uniformname);
         if (location == -1) {
             printf("WARNING: Uniform \"%s\" does not exist!\n", (char*)uniformname);
@@ -88,7 +88,7 @@ private:
             printf("Shader file %s could not be found/opened.", filepath);
             return nullptr;
         }
-    }    
+    }
 };
 
 class Texture
@@ -126,15 +126,15 @@ public:
         }
     }
     ~Texture() {
-            glDeleteTextures(1, &texture);
-        }
+        glDeleteTextures(1, &texture);
+    }
     void bindtexture(unsigned int slot) {
-            glActiveTexture(GL_TEXTURE0 + slot);
-            glBindTexture(GL_TEXTURE_2D, texture);
-        }
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, texture);
+    }
     void unbindtexture(void) {
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }     
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
 };
 
 class Model {
@@ -172,7 +172,7 @@ public:
         floatbuffer(GL_ARRAY_BUFFER, 1, &vertexbuffer, vertices, number_of_vertices * sizeof(float));
         vertexarray(1, &vao);
         unsignedintbuffer(GL_ELEMENT_ARRAY_BUFFER, 1, &indexbuffer, indices, number_of_indices * sizeof(float));
-        
+
     }
     virtual void draw() {
         for (uint8_t i = 0; i < texnum; i++) {
@@ -212,7 +212,7 @@ private:
     float scroll_x2;
     float scroll_y2;
 public:
-    
+
     DispModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp, float x1, float y1, float x2, float y2) : Model(vertices_in, number_of_vertices, indices_in, number_of_indices, texturearray, number_of_textures, modelshader, mvp) {
         scroll_x1 = x1;
         scroll_y1 = y1;
@@ -249,10 +249,10 @@ public:
 
         //Scroll the texture coordinates
         for (unsigned int i = 0; i < vertnum; i++) {
-            vertices[(8*i)+2] += scroll_x1;
-            vertices[(8*i)+3] += scroll_y1;
-            vertices[(8*i)+4] += scroll_x2;
-            vertices[(8*i)+5] += scroll_y2;
+            vertices[(8 * i) + 2] += scroll_x1;
+            vertices[(8 * i) + 3] += scroll_y1;
+            vertices[(8 * i) + 4] += scroll_x2;
+            vertices[(8 * i) + 5] += scroll_y2;
             //Possibility of float overflow, but will only happen after a long time and will quickly snap back to normal.
         }
         floatbuffer(GL_ARRAY_BUFFER, 1, &vertexbuffer, vertices, vertnum * sizeof(float) * 8);
@@ -264,53 +264,53 @@ class Renderer {
 public:
     GLFWwindow* window;
     Renderer(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share, int swapinterval, float red, float green, float blue, float alpha) {
-            //Initialize the library
-            if (!glfwInit()) {
-                printf("GLFW initiation failed\n");
-            }
-            printf("GLWF initiated\n");
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-
-            //Create a windowed mode window and its OpenGL context
-            window = glfwCreateWindow(width, height, title, monitor, share);
-            if (window == nullptr) {
-                printf("Failed to create GLFW window\n");
-                glfwTerminate();
-            }
-
-            //Make the window's context current
-            glfwMakeContextCurrent(window);
-            glfwSwapInterval(swapinterval);
-
-            if (glewInit() != GLEW_OK) {
-                printf("Oh dear! It seems that for some reason, GLEW didn't initialise correctly.\n");
-                glfwTerminate();
-            }
-
-            printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_BLEND);
-            glClearColor(red, green, blue, alpha);
-            // Ensure we can capture the escape key being pressed below
-            glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-            // Hide the mouse and enable unlimited mouvement
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-            // Set the mouse at the center of the screen
-            glfwPollEvents();
-            glfwSetCursorPos(window, width / 2, height / 2);
-            // Enable depth test
-            glEnable(GL_DEPTH_TEST);
-            glDepthFunc(GL_LESS);
-
-            glFrontFace(GL_CCW);
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_BACK);
+        //Initialize the library
+        if (!glfwInit()) {
+            printf("GLFW initiation failed\n");
         }
+        printf("GLWF initiated\n");
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+
+        //Create a windowed mode window and its OpenGL context
+        window = glfwCreateWindow(width, height, title, monitor, share);
+        if (window == nullptr) {
+            printf("Failed to create GLFW window\n");
+            glfwTerminate();
+        }
+
+        //Make the window's context current
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(swapinterval);
+
+        if (glewInit() != GLEW_OK) {
+            printf("Oh dear! It seems that for some reason, GLEW didn't initialise correctly.\n");
+            glfwTerminate();
+        }
+
+        printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glClearColor(red, green, blue, alpha);
+        // Ensure we can capture the escape key being pressed below
+        glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+        // Hide the mouse and enable unlimited mouvement
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+        // Set the mouse at the center of the screen
+        glfwPollEvents();
+        glfwSetCursorPos(window, width / 2, height / 2);
+        // Enable depth test
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        glFrontFace(GL_CCW);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
     ~Renderer() {
         free(window);
     }
