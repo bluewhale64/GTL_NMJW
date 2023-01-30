@@ -11,7 +11,7 @@ glm::mat4 getProjectionMatrix() {
 
 
 // Initial position : on +Z
-glm::vec3 position = glm::vec3(0, 2, -8);
+glm::vec3 position = glm::vec3(0, 0, -8);
 // Initial horizontal angle : toward -Z
 float horizontalAngle = 0.0f;
 // Initial vertical angle : none
@@ -82,6 +82,7 @@ void computeMatricesFromInputs(GLFWwindow* window, int width, int height, float 
 
     // Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
     ProjectionMatrix = glm::perspective(glm::radians(FoV), aspect, 0.1f, 100.0f);
+    //ProjectionMatrix = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -1.0f, 1.0f);
     // Camera matrix
     ViewMatrix = glm::lookAt(
         position,           // Camera is here

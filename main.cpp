@@ -2,9 +2,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define GLEW_STATIC
 
-//To do: Squash it into 2D mode
-
-//Orthographic matrix
+//Next step:
+//Change Model-View-Projection matrix in controls.hpp.80
 
 #include <std_image.h>
 #include <glew.h>
@@ -30,13 +29,12 @@ int main(void) {
         return -1;
     }
 
-
     glm::mat4 P = glm::ortho(0.0f, (float)width, (float)height, 0.0f, -1.0f, 1.0f);
     //glm::mat4 P = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
     // Camera matrix
     glm::mat4 V = glm::lookAt(
-        glm::vec3(0, 0, -1), // Camera is at (0,0,0), in World Space
-        glm::vec3(0, 0, -1), // and looks this position (0, 0, -10)
+        glm::vec3(0, 0, 0), // Camera is at (0,0,0), in World Space
+        glm::vec3(0, 0, 0), // and looks this position (0, 0, -10)
         glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
     );
 
@@ -46,10 +44,10 @@ int main(void) {
     glm::mat4 mvp = P * V * M; // Remember, matrix multiplication is the other way around
 
     float testcorners[] = {
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0,
-        -1.0f,  1.0f, 0.0f, 0.0f, 1.0f, 0,
-         1.0f,  1.0f, 0.0f, 1.0f, 1.0f, 0,
-         1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0
+        -1.0f, -1.0f, 0.0f, 0.0f, 0,
+        -1.0f,  1.0f, 0.0f, 1.0f, 0,
+         1.0f,  1.0f, 1.0f, 1.0f, 0,
+         1.0f, -1.0f, 1.0f, 0.0f, 0
     };
     unsigned int testindices[] = { 0,1,2,2,3,0 };
 
@@ -57,7 +55,7 @@ int main(void) {
     Texture BWH("textures/512x512_hh.png", GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, border);
     Shader TXS("shaders/2Dtexture.vertex", "shaders/2Dtexture.fragment");
     Texture* testpics[] = { &BWH };
-    Model NHM(testcorners, 24, testindices, 6, testpics, 1, &TXS, &mvp);
+    Model NHM(testcorners, 20, testindices, 6, testpics, 1, &TXS, &mvp);
 
     Texture BLK("textures/OldFSS02.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
     Texture DPM("textures/OldFSS00.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
@@ -67,33 +65,28 @@ int main(void) {
     Texture DM0("textures/dmp3.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
     Texture DM1("textures/dmp4.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
 
-    Texture DM5("textures/dmp5.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
+    Texture DM7("textures/dmp7.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
     Texture DM6("textures/dmp6.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
 
     Shader DPT("shaders/displacement.vertex", "shaders/displacement.fragment");
-    Texture* testex1[] = {&GND, &DM5};
-    Texture* testex2[] = {&GND, &DM6};
+    Texture* testex1[] = {&GND, &DM7};
+    Texture* testex2[] = {&GND, &DM7};
     float testcs1[] = {
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
-        -1.0f,  1.0f, 0.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0, 1,
-         1.0f,  1.0f, 0.0f, 1.3f, 1.3f, 1.0f, 1.0f, 0, 1,
-         1.0f, -1.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0.0f, 0, 1
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
+        -1.0f,  1.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0, 1,
+         1.0f,  1.0f, 1.3f, 1.3f, 1.0f, 1.0f, 0, 1,
+         1.0f, -1.0f, 1.3f, 0.0f, 1.0f, 0.0f, 0, 1
     };
     float testcs2[] = {
-         1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
-         1.0f,  1.0f, 0.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0, 1,
-         3.0f,  1.0f, 0.0f, 1.3f, 1.3f, 1.0f, 1.0f, 0, 1,
-         3.0f, -1.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0.0f, 0, 1
+         1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
+         1.0f,  1.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0, 1,
+         3.0f,  1.0f, 1.3f, 1.3f, 1.0f, 1.0f, 0, 1,
+         3.0f, -1.0f, 1.3f, 0.0f, 1.0f, 0.0f, 0, 1
     };
-    DispModel Test1(testcs1, 36, testindices, 6, testex1, 2, &DPT, &mvp, 0.0000, 0.00070, 0.0008, 0.008);
-    DispModel Test2(testcs2, 36, testindices, 6, testex2, 2, &DPT, &mvp, 0.0000, 0.00070, 0.0008, 0.000);
-    //Texture is currently being used as its own displacement map - BUG
-    //either in shader or dismodel.draw
+    DispModel Test2(testcs1, 32, testindices, 6, testex1, 2, &DPT, &mvp, 0.0000, 0.00070, 0.0008, 0.001); //variable y2 causes issues
 
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        Test1.draw();
         Test2.draw();
         glfwSwapBuffers(render.window);
         glfwPollEvents();
@@ -102,8 +95,7 @@ int main(void) {
         glm::mat4 ViewMatrix = getViewMatrix();
         glm::mat4 ModelMatrix = glm::mat4(1.0);
         mvp = ProjectionMatrix * ViewMatrix * ModelMatrix;
-
+        mvp = P * V * M;
     }
-
     return 0;
 }
