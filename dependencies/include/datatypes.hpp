@@ -100,7 +100,7 @@ public:
         stbi_set_flip_vertically_on_load(1);
         unsigned char* localbuffer = stbi_load(imagefile, &width, &height, &bpp, 4);
         if (!localbuffer) {
-            printf("Image file %s could not be found/opened", imagefile);
+            printf("Image file %s could not be found/opened\n", imagefile);
         }
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -117,7 +117,7 @@ public:
             glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, border);
         }
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localbuffer);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localbuffer);
         glBindTexture(GL_TEXTURE_2D, 0);
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -187,13 +187,13 @@ public:
         glUniform1iv(arrayloc, texnum, samplers);
 
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0 * sizeof(float)));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(0 * sizeof(float)));
 
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(4 * sizeof(float)));
+        glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(5 * sizeof(float)));
 
         glDrawElements(GL_TRIANGLES, indexnum, GL_UNSIGNED_INT, (void*)0);
 
@@ -218,7 +218,7 @@ public:
         scroll_y1 = y1;
         scroll_x2 = x2;
         scroll_y2 = y2;
-        vertnum = number_of_vertices / 8;
+        vertnum = number_of_vertices / 9;
     }
     void draw() override {
         for (uint8_t i = 0; i < texnum; i++) {
@@ -233,13 +233,13 @@ public:
         glUniform1iv(arrayloc, texnum, samplers);
 
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(0 * sizeof(float)));
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(0 * sizeof(float)));
 
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(2 * sizeof(float)));
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
 
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(7 * sizeof(float)));
 
         glDrawElements(GL_TRIANGLES, indexnum, GL_UNSIGNED_INT, (void*)0);
 
@@ -249,13 +249,13 @@ public:
 
         //Scroll the texture coordinates
         for (unsigned int i = 0; i < vertnum; i++) {
-            vertices[(8 * i) + 2] += scroll_x1;
-            vertices[(8 * i) + 3] += scroll_y1;
-            vertices[(8 * i) + 4] += scroll_x2;
-            vertices[(8 * i) + 5] += scroll_y2;
+            vertices[(9 * i) + 3] += scroll_x1;
+            vertices[(9 * i) + 4] += scroll_y1;
+            vertices[(9 * i) + 5] += scroll_x2;
+            vertices[(9 * i) + 6] += scroll_y2;
             //Possibility of float overflow, but will only happen after a long time and will quickly snap back to normal.
         }
-        floatbuffer(GL_ARRAY_BUFFER, 1, &vertexbuffer, vertices, vertnum * sizeof(float) * 8);
+        floatbuffer(GL_ARRAY_BUFFER, 1, &vertexbuffer, vertices, vertnum * sizeof(float) * 9);
     }
     ~DispModel() override {}
 };
@@ -292,8 +292,9 @@ public:
         }
 
         printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        
         glClearColor(red, green, blue, alpha);
         // Ensure we can capture the escape key being pressed below
         glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);

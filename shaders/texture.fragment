@@ -1,12 +1,11 @@
 #version 330 core
 in vec2 UV_coords;
-in float v_texnum;
+in flat int v_texnum;
 out vec4 colour;
 uniform sampler2D u_texarray[32];
 void main(){
-  int index = int(v_texnum);
-  if(index >= 0){
-    colour = texture(u_texarray[index], UV_coords);
+  if(v_texnum >= 0){
+    colour = texture(u_texarray[v_texnum], UV_coords);
   }
   else{
     colour = vec4(0.0f,0.0f,0.0f,0.25f);

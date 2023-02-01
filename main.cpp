@@ -2,13 +2,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define GLEW_STATIC
 
-//Next step:
-//Change Model-View-Projection matrix in controls.hpp.80
-
-//Make 2D - sort of done
-//Make scene - clamp colour is 0x434343, scene implementation done
+//Made scene - consists of 3 textures
 //Make sprite - now
-//Make walk
+//Make walk or basic motion
 
 #include <std_image.h>
 #include <glew.h>
@@ -39,8 +35,8 @@ int main(void) {
     glm::mat4 P = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
     // Camera matrix
     glm::mat4 V = glm::lookAt(
-        glm::vec3(0, 0, -2), // Camera is at (0,0,0), in World Space
-        glm::vec3(0, 0, 0), // and looks this position (0, 0, -10)
+        glm::vec3(10, 2.5, 20), // Camera is at (0,0,0), in World Space
+        glm::vec3(10, 2.5, 0), // and looks this position (0, 0, -10)
         glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
     );
 
@@ -48,74 +44,49 @@ int main(void) {
     glm::mat4 M = glm::mat4(1.0f);
     // Our ModelViewProjection : multiplication of our 3 matrices
     glm::mat4 mvp = P * V * M; // Remember, matrix multiplication is the other way around
-
-    float testcorners[] = {
-        -1.0f, -1.0f, 0.0f, 0.0f, 0,
-        -1.0f,  1.0f, 0.0f, 1.0f, 0,
-         1.0f,  1.0f, 1.0f, 1.0f, 0,
-         1.0f, -1.0f, 1.0f, 0.0f, 0
-    };
-    unsigned int testindices[] = { 0,1,2,2,3,0 };
-
-    float CNR[] = {
-       -1.0f, -2.0f, 0.0f, 0.0f, 0,
-       -1.0f,  2.0f, 0.0f, 1.0f, 0,
-        1.0f,  2.0f, 1.0f, 1.0f, 0,
-        1.0f, -2.0f, 1.0f, 0.0f, 0
-    };
-
-    float border[4] = { 0.26275, 0.26275, 0.26275, 1.0 };
-    Shader TXS("shaders/2Dtexture.vertex", "shaders/2Dtexture.fragment");
-    Texture HH("textures/H_TEST.png", GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, border);
-    Texture* FLOOR[] = { &HH };
-    Model SCENE(CNR, 20, testindices, 6, FLOOR, 1, &TXS, &mvp);
     /*
-    Texture BWH("textures/512x512_hh.png", GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER, border);
-    
-    Texture* testpics[] = { &BWH };
-    Model NHM(testcorners, 20, testindices, 6, testpics, 1, &TXS, &mvp);
-
-    Texture BLK("textures/OldFSS02.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
-    Texture DPM("textures/OldFSS00.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
-
-    Texture GND("textures/cobble_stone.jpg", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
-    
-    Texture DM0("textures/dmp3.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
-    Texture DM1("textures/dmp4.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
-
-    Texture DM7("textures/dmp7.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
-    Texture DM6("textures/dmp6.png", GL_LINEAR, GL_LINEAR, GL_MIRRORED_REPEAT, GL_MIRRORED_REPEAT, nullptr);
-
-    Shader DPT("shaders/displacement.vertex", "shaders/displacement.fragment");
-    Texture* testex1[] = {&GND, &DM7};
-    Texture* testex2[] = {&GND};
-    float testcs1[] = {
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0, 1,
-        -1.0f,  1.0f, 0.0f, 1.3f, 0.0f, 1.0f, 0, 1,
-         1.0f,  1.0f, 1.3f, 1.3f, 1.0f, 1.0f, 0, 1,
-         1.0f, -1.0f, 1.3f, 0.0f, 1.0f, 0.0f, 0, 1
-    };
-
-    float testcs2[] = {
-         1.0f, -1.0f, 0.0f, 0.0f, 0,
-         1.0f,  1.0f, 0.0f, 1.3f, 0,
-         3.0f,  1.0f, 1.3f, 1.3f, 0,
-         3.0f, -1.0f, 1.3f, 0.0f, 0
-    };
-
-    DispModel Test2(testcs1, 32, testindices, 6, testex1, 2, &DPT, &mvp, 0.0000, 0.00070, 0.0008, 0.001); //variable y2 causes issues
-    Model A(testcs2, 20, testindices, 6, testex2, 1, &TXS, &mvp);
+    unsigned int testindices[] = { 0,1,2,2,3,0 };
     */
+    //floor, wall, sky
+    float CNR[] = {
+        0.0, 0.0,  0.0, 0.0, 0.0, 0,
+        0.0, 0.0, -5.0, 0.0, 1.0, 0,
+       20.0, 0.0, -5.0, 4.0, 1.0, 0,
+       20.0, 0.0,  0.0, 4.0, 0.0, 0,
+        0.0, 0.0,  0.0, 0.0, 0.0, 1,
+        0.0, 5.0,  0.0, 0.0, 1.0, 1,
+        0.0, 5.0, -5.0, 1.0, 1.0, 1,
+        0.0, 0.0, -5.0, 1.0, 0.0, 1,
+       20.0, 0.0, -5.0, 5.0, 0.0, 1,
+       20.0, 5.0, -5.0, 5.0, 1.0, 1,  
+       20.0, 5.0,  0.0, 6.0, 1.0, 1,
+       20.0, 0.0,  0.0, 6.0, 0.0, 1,
+       -5.0, -5.0, -10.0, 0.0, 0.0, 2,
+       -5.0, 10.0, -10.0, 0.0, 1.0, 2,
+       25.0, 10.0, -10.0, 1.0, 1.0, 2,
+       25.0, -5.0, -10.0, 1.0, 0.0, 2,};
+    //Until blending functionality is improved, draw non-transparent objects before all transparent objects
+    //Then sort transparent objects from nearest to farthest
+    //sky, floor, wall
+    unsigned int IND[] = {
+    12,14,13,12,15,14,
+    0,2,1,0,3,2,
+    4,6,5,4,7,6,
+    6,7,8,6,8,9,
+    8,10,9,8,11,10};
+
+    Shader TXS("shaders/texture.vertex", "shaders/texture.fragment");
+    Texture TL0("textures/256x256_mossground.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
+    Texture TL1("textures/256x256_wall.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
+    Texture TL2("textures/256x256_sky.png", GL_NEAREST, GL_NEAREST, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE, nullptr);
+    Texture* TLT[] = {&TL0, &TL1, &TL2};
+    Model TLM(CNR, 96, IND, 30, TLT, 3, &TXS, &mvp);
+    
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        SCENE.draw();
+        TLM.draw();
         glfwSwapBuffers(render.window);
         glfwPollEvents();
-        //computeMatricesFromInputs(render.window, width, height, aspect);
-        //glm::mat4 ProjectionMatrix = getProjectionMatrix();
-        //glm::mat4 ViewMatrix = getViewMatrix();
-        //glm::mat4 ModelMatrix = glm::mat4(1.0);
-        //mvp = ProjectionMatrix * ViewMatrix * ModelMatrix;
     }
     return 0;
 }
