@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.20)
+project("Game Testing Lab")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
+add_executable("GTL_NMJW" "main.cpp")
+find_package(glfw3 REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(OpenGL REQUIRED)
+target_link_libraries("GTL_NMJW" glfw GLEW::GLEW OpenGL::GL)

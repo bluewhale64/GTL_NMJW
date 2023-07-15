@@ -1,13 +1,22 @@
 #version 330 core
 in vec2 UV_coords;
-in flat int v_texnum;
+flat in int v_texnum;
 out vec4 colour;
-uniform sampler2D u_texarray[32];
+uniform sampler2D u_texarray[8];
 void main(){
-  if(v_texnum >= 0){
-    colour = texture(u_texarray[v_texnum], UV_coords);
+  if(v_texnum == 0){
+    colour = texture(u_texarray[0], UV_coords);
+  }
+  if(v_texnum == 1){
+    colour = texture(u_texarray[1], UV_coords);
+  }
+  if(v_texnum == 2){
+    colour = texture(u_texarray[2], UV_coords);
+  }
+  if(v_texnum == 3){
+    colour = texture(u_texarray[3], UV_coords);
   }
   else{
-    colour = vec4(0.0f,0.0f,0.0f,0.25f);
+    colour = vec4(0.0f, 0.0f, 0.0f, 0.25f);
   }
 }
