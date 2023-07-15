@@ -38,18 +38,22 @@ int main(void) {
     
     unsigned int basicindices[6] = { 0,1,2,2,3,0 };
     float keycorners[24] = {
-        -0.25, -0.25, 1, 0, 0, 0,
-         0.25, -0.25, 1, 1, 0, 0,
-         0.25,  0.25, 1, 1, 1, 0,
-        -0.25,  0.25, 1, 0, 1, 0
+        -0.5, -0.5, 5, 0, 0, 0,
+         0.5, -0.5, 5, 1, 0, 0,
+         0.5,  0.5, 5, 1, 1, 0,
+        -0.5,  0.5, 5, 0, 1, 0
     };
     Shader TextureShader("shaders/texture.vertex", "shaders/texture.fragment");
+    int result = 0;
+    glGetProgramiv(TextureShader.program, GL_VALIDATE_STATUS, &result);
+    printf("%i\n", result);
     Texture BlueSquare("textures/bluesquare.png", GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, nullptr);
-    Model A_Key(keycorners, 24, basicindices, 6, &BlueSquare, 1, &TextureShader, &mvp);
+    Texture* KeyTextures[] = { &BlueSquare };
+    Model A_Key(keycorners, 24, basicindices, 6, KeyTextures, 1, &TextureShader, &mvp);
 
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //T1.draw();
+        A_Key.draw();
         glfwSwapBuffers(render.window);
         glfwPollEvents();
     }

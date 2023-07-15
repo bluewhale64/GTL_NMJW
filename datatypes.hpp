@@ -138,8 +138,8 @@ protected:
     unsigned int indexnum;
     GLint matloc = 0;
     GLint arrayloc = 0;
-    GLint samplers[32] = {};
-    GLuint textures[32] = {};
+    GLint samplers[8] = {};
+    GLuint textures[8] = {};
     GLuint shader;
     unsigned int vertexbuffer;
     unsigned int indexbuffer;
@@ -147,8 +147,7 @@ protected:
     unsigned int texnum;
     GLfloat* MVP;
 public:
-    Model(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, 
-          Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp) {
+    Model(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp) {
         shader = modelshader->program;
         //glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
         matloc = glGetUniformLocation(shader, "MVP");
@@ -167,7 +166,6 @@ public:
         floatbuffer(GL_ARRAY_BUFFER, 1, &vertexbuffer, vertices, number_of_vertices * sizeof(float));
         vertexarray(1, &vao);
         unsignedintbuffer(GL_ELEMENT_ARRAY_BUFFER, 1, &indexbuffer, indices, number_of_indices * sizeof(float));
-
     }
     virtual void draw() {
         for (uint8_t i = 0; i < texnum; i++) {
@@ -307,7 +305,7 @@ public:
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
 
-        glFrontFace(GL_CCW);
+        glFrontFace(GL_CW);
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
     }

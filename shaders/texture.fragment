@@ -16,7 +16,19 @@ void main(){
   if(v_texnum == 3){
     colour = texture(u_texarray[3], UV_coords);
   }
+  if(v_texnum == 4){
+    colour = texture(u_texarray[4], UV_coords);
+  }
+  if(v_texnum == 5){
+    colour = texture(u_texarray[5], UV_coords);
+  }
+  if(v_texnum == 6){
+    colour = texture(u_texarray[6], UV_coords);
+  }
+  if(v_texnum == 7){
+    colour = texture(u_texarray[7], UV_coords);
+  }
   else{
-    colour = vec4(0.0f, 0.0f, 0.0f, 0.25f);
+    colour = vec4(0.25f, 0.25f, 0.25f, 0.25f);
   }
 }
