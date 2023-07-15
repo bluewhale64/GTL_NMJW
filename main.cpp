@@ -12,7 +12,6 @@
 #include "buffer.hpp"
 #include "datatypes.hpp"
 
-//#include "controls.hpp"
 
 int main(void) {
 
