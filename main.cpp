@@ -26,7 +26,6 @@ int main(void) {
         return -1;
     }
 
-
     glm::mat4 P = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
     // Camera (View) matrix
     glm::mat4 V = glm::lookAt(
