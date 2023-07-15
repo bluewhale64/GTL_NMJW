@@ -20,7 +20,7 @@ int main(void) {
     int height = 600;
     float aspect = (float)width / (float)height;
 
-    Renderer render(width, height, "GTL_NMJW", nullptr, nullptr, 1, 0.0f, 0.3f, 0.2f, 0.0f);
+    Renderer render(width, height, "GTL NMJW", nullptr, nullptr, 1, 0.0f, 0.3f, 0.2f, 0.0f);
     if (render.window == nullptr) {
         printf("Window Startup Error\n");
         return -1;
