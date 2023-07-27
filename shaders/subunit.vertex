@@ -1,0 +1,11 @@
+#version 330 core
+layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 1) in vec2 UV_vertex;
+layout(location = 2) in vec4 UV_bounds;
+uniform mat4 MVP;
+out vec2 UV_coords;
+void main(){
+    gl_Position =  MVP * vec4(vertexPosition_modelspace,1);
+    vec2 size = UV_bounds.yz - UV_bounds.wx;
+    UV_coords = vec2(mod(UV_vertex.x, size.x) + UV_bounds.w, mod(UV_vertex.y, size.y) + UV_bounds.x);
+}

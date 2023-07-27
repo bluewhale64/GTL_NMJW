@@ -28,7 +28,7 @@ void main(){
   if(v_texnum == 7){
     colour = texture(u_texarray[7], UV_coords);
   }
-  else{
+  if(v_texnum < 0 || v_texnum > 7){
     colour = vec4(0.25f, 0.25f, 0.25f, 0.25f);
   }
 }

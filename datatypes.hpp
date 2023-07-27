@@ -253,6 +253,43 @@ public:
     ~DispModel() override {}
 };
 
+class SubunitModel : public Model {
+private:
+    GLint texloc;
+public:
+    SubunitModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp) : Model(vertices_in, number_of_vertices, indices_in, number_of_indices, texturearray, number_of_textures, modelshader, mvp) {
+        texloc = glGetUniformLocation(shader, "u_texture");
+    }
+    void draw() override {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textures[0]);
+    
+        glUseProgram(shader);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
+
+        glUniformMatrix4fv(matloc, 1, GL_FALSE, MVP);
+        glUniform1i(texloc, 0);
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(0 * sizeof(float)));
+
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
+
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(5 * sizeof(float)));
+
+        glDrawElements(GL_TRIANGLES, indexnum, GL_UNSIGNED_INT, (void*)0);
+
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+    }
+    ~SubunitModel() override {}
+};
+
+
 class Renderer {
 public:
     GLFWwindow* window;

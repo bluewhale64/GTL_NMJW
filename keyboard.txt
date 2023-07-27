@@ -1,0 +1,20 @@
+QWERTYUIOP
+ASDFGHJKL:
+ZXCVBNM<>?
+
+qwertyuiop
+asdfghjkl;
+zxcvbnm,./
+
+[2][3][10]
+
+Each frame, measure the state of 7 keys (Up, Down, Left, Right, Enter, Shift, Backspace.)
+If ((key is pressed) AND (its flag is 0)), move cursor in the direction of that arrow, or choose that character. Then set the key's flag to 1.
+If (key is not pressed), set its flag to 0.
+
+Moving the keyboard cursor means incrementing an array pointer.
+Shift presses flip between 0[3][10] and 1[3][10].
+The array pointer wraps around when bounds are exceeded.
+
+When ENTER is used, the selected character is placed into the next free index in the output array, if there is one.
+When BACKSPACE is used, the last character in the output array is replaced with a space and the output array cursor moves one space left if it can.

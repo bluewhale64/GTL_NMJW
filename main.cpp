@@ -37,22 +37,31 @@ int main(void) {
     
     unsigned int basicindices[6] = { 0,1,2,2,3,0 };
     float keycorners[24] = {
-        -0.5, -0.5, 5, 0, 0, 0,
-         0.5, -0.5, 5, 1, 0, 0,
-         0.5,  0.5, 5, 1, 1, 0,
-        -0.5,  0.5, 5, 0, 1, 0
+        -0.5, -0.5, 5.0, 0.0, 0.0, 0,
+         0.5, -0.5, 5.0, 1.0, 0.0, 0,
+         0.5,  0.5, 5.0, 1.0, 1.0, 0,
+        -0.5,  0.5, 5.0, 0.0, 1.0, 0
     };
     Shader TextureShader("shaders/texture.vertex", "shaders/texture.fragment");
-    int result = 0;
-    glGetProgramiv(TextureShader.program, GL_VALIDATE_STATUS, &result);
-    printf("%i\n", result);
     Texture BlueSquare("textures/bluesquare.png", GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, nullptr);
-    Texture* KeyTextures[] = { &BlueSquare };
+    Texture Mii("textures/512x512_mii.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
+    Texture* KeyTextures[] = { &Mii };
     Model A_Key(keycorners, 24, basicindices, 6, KeyTextures, 1, &TextureShader, &mvp);
+
+    Shader SubunitShader("shaders/subunit.vertex", "shaders/subunit.fragment");
+    Texture TileSubunit("textures/subunit.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
+    Texture* SubunitTextures[] = { &TileSubunit};
+    float subcorners[36] = {
+        -0.5, -0.5, 5.0, 0.0, 0.0, 0.25, 0.25, 0.75, 0.75,
+         0.5, -0.5, 5.0, 1.0, 0.0, 0.25, 0.25, 0.75, 0.75,
+         0.5,  0.5, 5.0, 1.0, 1.0, 0.25, 0.25, 0.75, 0.75,
+        -0.5,  0.5, 5.0, 0.0, 1.0, 0.25, 0.25, 0.75, 0.75
+    };
+    SubunitModel Test(subcorners, 36, basicindices, 6, SubunitTextures, 1, &SubunitShader, &mvp);
 
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        A_Key.draw();
+        Test.draw();
         glfwSwapBuffers(render.window);
         glfwPollEvents();
     }
