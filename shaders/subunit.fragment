@@ -9,5 +9,4 @@ void main(){
     UV_bounded *= size;
     UV_bounded += UV_b.xy;
     colour = texture(u_texture, UV_bounded);
-    colour = texture(u_texture, UV_coords);
 }
