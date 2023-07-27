@@ -1,7 +1,13 @@
 #version 330 core
 in vec2 UV_coords;
+flat in vec4 UV_b;
+flat in vec2 size;
 out vec4 colour;
 uniform sampler2D u_texture;
 void main(){
-  colour = texture(u_texture, UV_coords);
+    vec2 UV_bounded = UV_coords - floor(UV_coords);
+    UV_bounded *= size;
+    UV_bounded += UV_b.xy;
+    colour = texture(u_texture, UV_bounded);
+    colour = texture(u_texture, UV_coords);
 }

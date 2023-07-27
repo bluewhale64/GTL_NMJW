@@ -4,10 +4,11 @@ layout(location = 1) in vec2 UV_vertex;
 layout(location = 2) in vec4 UV_bounds;
 uniform mat4 MVP;
 out vec2 UV_coords;
+flat out vec2 size;
+flat out vec4 UV_b;
 void main(){
     gl_Position =  MVP * vec4(vertexPosition_modelspace,1);
     vec2 size = UV_bounds.zw - UV_bounds.xy;
-
-    UV_coords = vec2((mod(UV_vertex.x, 1.0) + UV_bounds.x) * size.x, (mod(UV_vertex.y, 1.0) + UV_bounds.y) * size.y);
-
+    UV_coords = vec2((UV_vertex.x * size.x + UV_bounds.x), (UV_vertex.y * size.y + UV_bounds.y));
+    UV_b = UV_bounds;
 }

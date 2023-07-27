@@ -52,10 +52,10 @@ int main(void) {
     Texture TileSubunit("textures/subunit.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
     Texture* SubunitTextures[] = { &TileSubunit};
     float subcorners[36] = {
-        -0.5, -0.5, 5.0, 0.0, 0.0, 0.25, 0.25, 0.75, 0.75,
-         0.5, -0.5, 5.0, 1.0, 0.0, 0.25, 0.25, 0.75, 0.75,
-         0.5,  0.5, 5.0, 1.0, 1.0, 0.25, 0.25, 0.75, 0.75,
-        -0.5,  0.5, 5.0, 0.0, 1.0, 0.25, 0.25, 0.75, 0.75
+        -0.5, -0.5, 5.0,  1.5, -0.5, 0.25, 0.25, 0.75, 0.75,
+         0.5, -0.5, 5.0, -0.5, -0.5, 0.25, 0.25, 0.75, 0.75,
+         0.5,  0.5, 5.0, -0.5,  1.5, 0.25, 0.25, 0.75, 0.75,
+        -0.5,  0.5, 5.0,  1.5,  1.5, 0.25, 0.25, 0.75, 0.75
     };
     SubunitModel Test(subcorners, 36, basicindices, 6, SubunitTextures, 1, &SubunitShader, &mvp);
 
