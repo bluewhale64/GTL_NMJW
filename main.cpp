@@ -9,9 +9,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <array>
-#include "buffer.hpp"
 #include "datatypes.hpp"
+#include "model.hpp"
 
+//fix the need for buffer.hpp
 
 int main(void) {
 
@@ -42,22 +43,21 @@ int main(void) {
          0.5,  0.5, 5.0, 1.0, 1.0, 0,
         -0.5,  0.5, 5.0, 0.0, 1.0, 0
     };
-    Shader TextureShader("shaders/texture.vertex", "shaders/texture.fragment");
+    Shader TextureShader("shaders/texture_v.glsl", "shaders/texture_f.glsl");
     Texture BlueSquare("textures/bluesquare.png", GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, nullptr);
     Texture Mii("textures/512x512_mii.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
     Texture* KeyTextures[] = { &Mii };
-    Model A_Key(keycorners, 24, basicindices, 6, KeyTextures, 1, &TextureShader, &mvp);
-
-    Shader SubunitShader("shaders/subunit.vertex", "shaders/subunit.fragment");
+    SingleTextureModel A_Key(keycorners, 24, basicindices, 6, &Mii, &TextureShader, &mvp);
+    Shader SubunitShader("shaders/subunit_v.glsl", "shaders/subunit_f.glsl");
     Texture TileSubunit("textures/subunit.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
-    Texture* SubunitTextures[] = { &TileSubunit};
+    
     float subcorners[36] = {
         -0.5, -0.5, 5.0,  1.5, -0.5, 0.25, 0.25, 0.75, 0.75,
          0.5, -0.5, 5.0, -0.5, -0.5, 0.25, 0.25, 0.75, 0.75,
          0.5,  0.5, 5.0, -0.5,  1.5, 0.25, 0.25, 0.75, 0.75,
         -0.5,  0.5, 5.0,  1.5,  1.5, 0.25, 0.25, 0.75, 0.75
     };
-    SubunitModel Test(subcorners, 36, basicindices, 6, SubunitTextures, 1, &SubunitShader, &mvp);
+    SubunitModel Test(subcorners, 36, basicindices, 6, &TileSubunit, &SubunitShader, &mvp);
 
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
