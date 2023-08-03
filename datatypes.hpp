@@ -61,6 +61,7 @@ class Shader {
             }
             else {
                 printf("Shader %s failed to generate.\n", shadername);
+                return -1;
             }
         }
         const char* parse(const char* filepath) {
