@@ -12,8 +12,6 @@
 #include "datatypes.hpp"
 #include "model.hpp"
 
-//fix the need for buffer.hpp
-
 int main(void) {
 
     int width = 800;
@@ -27,12 +25,10 @@ int main(void) {
     }
 
     glm::mat4 P = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
-    // Camera (View) matrix
     glm::mat4 V = glm::lookAt(
-        glm::vec3(0, 0, 0), // Camera is at (0,0,0), in World Space
-        glm::vec3(0, 0, 10), // and looks this position (0, 0, 10) - Remeber, +Z is INTO the screen.
-        glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-    );
+        glm::vec3(0, 0, 0),  // Camera is at (0,0,0) in World Space
+        glm::vec3(0, 0, 10), // Looks this position - Remeber, +Z is INTO the screen.
+        glm::vec3(0, 1, 0)); // Head is up (set to 0,-1,0 to look upside-down)
     glm::mat4 M = glm::mat4(1.0f);
     glm::mat4 mvp = P * V * M; // Remember, matrix multiplication is the other way around
     
