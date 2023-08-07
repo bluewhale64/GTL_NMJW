@@ -17,7 +17,7 @@ class BasicModel {
         }
     public:
         BasicModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Shader* modelshader, glm::mat4* mvp) {
-            shader = modelshader->program;
+            shader = modelshader->getshader();
             matloc = glGetUniformLocation(shader, "MVP");
             MVP = (GLfloat*)mvp;
             vertices = vertices_in;
@@ -35,14 +35,33 @@ class BasicModel {
         virtual void draw() {
             drawsetup();
             glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0 * sizeof(float)));
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(0 * sizeof(float)));
             glDrawElements(GL_TRIANGLES, indexnum, GL_UNSIGNED_INT, (void*)0);
             glDisableVertexAttribArray(0);
-            glDisableVertexAttribArray(1);
         }
         virtual ~BasicModel() {}
+};
+
+class SingleColourModel : public BasicModel {
+    protected:
+        GLint colourloc = 0;
+        GLfloat colour[4];
+        void drawsetup() override{
+            glUseProgram(shader);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
+            glUniformMatrix4fv(matloc, 1, GL_FALSE, MVP);
+            glUniform4fv(colourloc, 1, colour);
+        }
+    public:
+        SingleColourModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Shader* modelshader, glm::mat4* mvp, float r, float g, float b, float a) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
+            colourloc = glGetUniformLocation(shader, "u_colour");
+            colour[0] = r;
+            colour[1] = g;
+            colour[2] = b;
+            colour[3] = a;
+        }
+        ~SingleColourModel() override{}
 };
 
 class ManyTextureModel : public BasicModel {
@@ -63,7 +82,7 @@ class ManyTextureModel : public BasicModel {
             arrayloc = glGetUniformLocation(shader, "u_texarray");
             texnum = number_of_textures;
             for (uint8_t i = 0; i < texnum; i++) {
-                textures[i] = (*texturearray[i]).texture;
+                textures[i] = texturearray[i]->gettexture();
                 samplers[i] = i;
             }
         }
@@ -97,7 +116,7 @@ class SingleTextureModel : public BasicModel {
         }
     public:
         SingleTextureModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp){
-            image = picture->texture;    
+            image = picture->gettexture();    
         }
         void draw() override {
             drawsetup();
@@ -152,7 +171,7 @@ class DispModel : public BasicModel {
             arrayloc = glGetUniformLocation(shader, "u_texarray");
             texnum = number_of_textures;
             for (uint8_t i = 0; i < texnum; i++) {
-                textures[i] = (*texturearray[i]).texture;
+                textures[i] = texturearray[i]->gettexture();
                 samplers[i] = i;
             }
             scroll_x1 = x1;
@@ -192,7 +211,7 @@ class SubunitModel : public BasicModel {
     public:
         SubunitModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
             texloc = glGetUniformLocation(shader, "u_texture");
-            image = picture->texture;
+            image = picture->gettexture();
         }
         void draw() override {
             drawsetup();

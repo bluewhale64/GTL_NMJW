@@ -6,11 +6,26 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <SDL2/SDL.h>
 #include <array>
 #include "datatypes.hpp"
 #include "model.hpp"
+#include "loader.hpp"
+#include "controller.hpp"
+
+/*
+SDL_GameController* findController(void) {
+    for (int i = 0; i < SDL_NumJoysticks(); i++) {
+        if (SDL_IsGameController(i)) {
+            return SDL_GameControllerOpen(i);
+        }
+    }
+    return nullptr;
+}
+*/
 
 int main(void) {
 
@@ -24,11 +39,39 @@ int main(void) {
         return -1;
     }
 
+    Loader loader;
+
+    /*
+    if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0) {
+        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    
+    SDL_GameController* controller = findController();
+    
+    SDL_Event event;
+    switch (event.type) {
+        case SDL_CONTROLLERDEVICEADDED:
+        if (!controller) {
+            controller = SDL_GameControllerOpen(event.cdevice.which);
+        }
+        break;
+        case SDL_CONTROLLERDEVICEREMOVED:
+        if (controller && event.cdevice.which == SDL_JoystickInstanceID(
+            SDL_GameControllerGetJoystick(controller))) {
+            SDL_GameControllerClose(controller);
+            controller = findController();
+        }
+        break;
+    }
+    */
+
     glm::mat4 P = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
     glm::mat4 V = glm::lookAt(
-        glm::vec3(0, 0, 0),  // Camera is at (0,0,0) in World Space
-        glm::vec3(0, 0, 10), // Looks this position - Remeber, +Z is INTO the screen.
-        glm::vec3(0, 1, 0)); // Head is up (set to 0,-1,0 to look upside-down)
+        glm::vec3(1, 0, -10),  // Camera is at (0,0,0) in World Space
+        glm::vec3(1, 0, 10),   // Looks this position - Remeber, +Z is INTO the screen.
+        glm::vec3(0, 1, 0));   // Head is up (set to 0,-1,0 to look upside-down)
     glm::mat4 M = glm::mat4(1.0f);
     glm::mat4 mvp = P * V * M; // Remember, matrix multiplication is the other way around
     
@@ -42,7 +85,7 @@ int main(void) {
     Shader TextureShader("shaders/texture_v.glsl", "shaders/texture_f.glsl");
     Texture BlueSquare("textures/bluesquare.png", GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, nullptr);
     Texture Mii("textures/512x512_mii.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
-    Texture* KeyTextures[] = { &Mii };
+    Texture* KeyTextures[] = { &Mii, &BlueSquare};
     SingleTextureModel A_Key(keycorners, 24, basicindices, 6, &Mii, &TextureShader, &mvp);
     Shader SubunitShader("shaders/subunit_v.glsl", "shaders/subunit_f.glsl");
     Texture TileSubunit("textures/subunit.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
@@ -55,9 +98,28 @@ int main(void) {
     };
     SubunitModel Test(subcorners, 36, basicindices, 6, &TileSubunit, &SubunitShader, &mvp);
 
+    Shader SingleColour("shaders/singlecolour_v.glsl", "shaders/singlecolour_f.glsl");
+    if(loader.load("assets/TARDIS_blank.bin") != 0){
+        printf("Model load failed\n");
+        return -1;
+    }
+    SingleColourModel TARDIS(loader.getvertexbuffer(), loader.getfloatcount(), loader.getindexbuffer(), loader.getindexcount(), &SingleColour, &mvp, 0.0, 0.0, 1.0, 1.0);
+    Shader multitex("shaders/texture_v.glsl","shaders/texture_v.glsl");
+    ManyTextureModel mtm(keycorners, 24, basicindices, 6, KeyTextures, 2, &multitex, &mvp);
+    float TEST[12] = {
+        -0.5, -2.5, 5.0,
+         0.5, -2.5, 5.0,
+         0.5,  2.5, 5.0,
+        -0.5,  2.5, 5.0
+    };
+    SingleColourModel TESTM(TEST, 12, basicindices, 6, &SingleColour, &mvp, 1.0, 0.0, 1.0, 1.0);
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Test.draw();
+        glDisable(GL_CULL_FACE);
+        //Test.draw();
+        //TESTM.draw();
+        //TARDIS.draw();
+        mtm.draw();
         glfwSwapBuffers(render.window);
         glfwPollEvents();
     }

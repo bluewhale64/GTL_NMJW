@@ -1,6 +1,5 @@
 class Shader {
     public:
-        GLuint program = glCreateProgram();
         Shader(const char* VertexShader, const char* FragmentShader) {
             unsigned int vertexshader = compile(parse(VertexShader), GL_VERTEX_SHADER, VertexShader);
             unsigned int fragmentshader = compile(parse(FragmentShader), GL_FRAGMENT_SHADER, FragmentShader);
@@ -19,6 +18,9 @@ class Shader {
         }
         void unbind() {
             glUseProgram(0);
+        }
+        GLuint getshader(){
+            return program;
         }
         GLint getuniformlocation(const char* uniformname) {
             GLint location = glGetUniformLocation(program, uniformname);
@@ -40,6 +42,7 @@ class Shader {
         }
     
     private:
+        GLuint program = glCreateProgram();
         static unsigned int compile(const char* source, unsigned int type, const char* shadername) {
             if(source != nullptr) {
                 unsigned int id = glCreateShader(type);
@@ -92,7 +95,6 @@ class Shader {
 
 class Texture {
     public:
-        GLuint texture;
         Texture(const char* imagefile, GLint texture_mag_filter, GLint texture_min_filter, GLint texture_wrap_s, GLint texture_wrap_t, float* border_colour) {
             int width, height, bpp;
             stbi_set_flip_vertically_on_load(1);
@@ -126,6 +128,9 @@ class Texture {
         ~Texture() {
             glDeleteTextures(1, &texture);
         }
+        GLuint gettexture(){
+            return texture;
+        }
         void bindtexture(unsigned int slot) {
             glActiveTexture(GL_TEXTURE0 + slot);
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -133,6 +138,8 @@ class Texture {
         void unbindtexture(void) {
             glBindTexture(GL_TEXTURE_2D, 0);
         }
+    private:
+        GLuint texture;
 };
 
 class Renderer {
