@@ -1,8 +1,8 @@
 class Loader {
     private:
         const char footprint[13] = "NMJW_MDLFMT_";
-        float* vertexbuffer;
-        unsigned int* indexbuffer;
+        GLfloat* vertexbuffer;
+        GLuint* indexbuffer;
         uint32_t MODEL_TYPE;
         uint32_t FILE_SIZE;
         uint32_t NUMBER_OF_FLOATS;
@@ -15,6 +15,13 @@ class Loader {
         Loader(){
             printf("Loader constructed.\n");
         }
+        int loadfail(const char* errormessage, FILE* file){
+            fprintf(stderr, errormessage);
+            fclose(file);
+            free(vertexbuffer);
+            free(indexbuffer);
+            return -1;
+        }
         int load_0000(FILE* file){
             fseek(file, 20, SEEK_SET);
             fread(&NUMBER_OF_FLOATS, 4, 1, file);
@@ -23,25 +30,45 @@ class Loader {
             fread(&NUMBER_OF_INDICES, 4, 1, file);
             fread(&INDEX_SIZE, 2, 1, file);
             fread(&INDEX_START_OFFSET, 4, 1, file); 
-            vertexbuffer = (float*)    malloc(NUMBER_OF_FLOATS  * FLOAT_SIZE);
-            indexbuffer  = (unsigned int*) malloc(NUMBER_OF_INDICES * INDEX_SIZE);
-            if(vertexbuffer == nullptr || indexbuffer == nullptr){
-                printf("ERROR: Float or Index reading buffer could not be allocated memory.\n");
-                fclose(file);
-                free(vertexbuffer);
-                free(indexbuffer);
-                return -1;
+            vertexbuffer = (GLfloat*) malloc(NUMBER_OF_FLOATS  * 4);
+            if(vertexbuffer == nullptr){
+                return loadfail("ERROR: Vertex reading buffer could not be allocated memory.\n", file);
             }
             fseek(file, FLOAT_START_OFFSET, SEEK_SET);
-            fread(vertexbuffer, FLOAT_SIZE, NUMBER_OF_FLOATS, file);
-            fseek(file, INDEX_START_OFFSET, SEEK_SET);
-            fread(indexbuffer, INDEX_SIZE, NUMBER_OF_INDICES, file);
-            fclose(file);
-            /*
-            for(int i = 0; i < 30; i++){
-                printf("%d\n", indexbuffer[NUMBER_OF_INDICES-1-i]);
+            if(FLOAT_SIZE == 8){
+                double store;
+                for(int i = 0; i < NUMBER_OF_FLOATS; i++){
+                    fread(&store, FLOAT_SIZE, 1, file);
+                    vertexbuffer[i] = (GLfloat)store;
+                }
             }
-            */
+            else if(FLOAT_SIZE == 4){
+                fread(vertexbuffer, FLOAT_SIZE, NUMBER_OF_FLOATS, file);
+            }
+            else{
+                return loadfail("ERROR: Invalid float size.\n", file);
+            }
+            fseek(file, INDEX_START_OFFSET, SEEK_SET);
+            if(INDEX_SIZE == 2){
+                indexbuffer  = (GLuint*) calloc(NUMBER_OF_INDICES, 4);
+                if(indexbuffer == nullptr){
+                    return loadfail("ERROR: Index reading buffer could not be allocated memory.\n", file);
+                }
+                for(int i = 0; i < NUMBER_OF_INDICES; i++){
+                    fread(&indexbuffer[i], INDEX_SIZE, 1, file);
+                }
+            }
+            else if(INDEX_SIZE == 4){
+                indexbuffer  = (GLuint*) malloc(NUMBER_OF_INDICES * 4);
+                if(indexbuffer == nullptr){
+                    return loadfail("ERROR: Index reading buffer could not be allocated memory.\n", file);
+                }
+                fread(indexbuffer, INDEX_SIZE, NUMBER_OF_INDICES, file);
+            }
+            else{
+                return loadfail("ERROR: Invalid index size.\n", file);
+            }
+            fclose(file);
             return 0;
         }
         int load(const char* filename){
@@ -83,13 +110,14 @@ class Loader {
         uint32_t getindexcount(){
             return NUMBER_OF_INDICES;
         }
-        float* getvertexbuffer(){
+        GLfloat* getvertexbuffer(){
             return vertexbuffer;
         }
-        unsigned int* getindexbuffer(){
+        GLuint* getindexbuffer(){
             return indexbuffer;
         }
         ~Loader(){
-            ;
+            free(vertexbuffer);
+            free(indexbuffer);
         }
 };

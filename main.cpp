@@ -75,8 +75,8 @@ int main(void) {
     glm::mat4 M = glm::mat4(1.0f);
     glm::mat4 mvp = P * V * M; // Remember, matrix multiplication is the other way around
     
-    unsigned int basicindices[6] = { 0,1,2,2,3,0 };
-    float keycorners[24] = {
+    GLuint basicindices[6] = { 0,1,2,2,3,0 };
+    GLfloat keycorners[24] = {
         -0.5, -0.5, 5.0, 0.0, 0.0, 0,
          0.5, -0.5, 5.0, 1.0, 0.0, 0,
          0.5,  0.5, 5.0, 1.0, 1.0, 0,
@@ -85,12 +85,11 @@ int main(void) {
     Shader TextureShader("shaders/texture_v.glsl", "shaders/texture_f.glsl");
     Texture BlueSquare("textures/bluesquare.png", GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, nullptr);
     Texture Mii("textures/512x512_mii.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
-    Texture* KeyTextures[] = { &Mii, &BlueSquare};
-    SingleTextureModel A_Key(keycorners, 24, basicindices, 6, &Mii, &TextureShader, &mvp);
+    //SingleTextureModel A_Key(keycorners, 24, basicindices, 6, &Mii, &TextureShader, &mvp);
     Shader SubunitShader("shaders/subunit_v.glsl", "shaders/subunit_f.glsl");
     Texture TileSubunit("textures/subunit.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
     
-    float subcorners[36] = {
+    GLfloat subcorners[36] = {
         -0.5, -0.5, 5.0,  1.5, -0.5, 0.25, 0.25, 0.75, 0.75,
          0.5, -0.5, 5.0, -0.5, -0.5, 0.25, 0.25, 0.75, 0.75,
          0.5,  0.5, 5.0, -0.5,  1.5, 0.25, 0.25, 0.75, 0.75,
@@ -104,22 +103,11 @@ int main(void) {
         return -1;
     }
     SingleColourModel TARDIS(loader.getvertexbuffer(), loader.getfloatcount(), loader.getindexbuffer(), loader.getindexcount(), &SingleColour, &mvp, 0.0, 0.0, 1.0, 1.0);
-    Shader multitex("shaders/texture_v.glsl","shaders/texture_v.glsl");
-    ManyTextureModel mtm(keycorners, 24, basicindices, 6, KeyTextures, 2, &multitex, &mvp);
-    float TEST[12] = {
-        -0.5, -2.5, 5.0,
-         0.5, -2.5, 5.0,
-         0.5,  2.5, 5.0,
-        -0.5,  2.5, 5.0
-    };
-    SingleColourModel TESTM(TEST, 12, basicindices, 6, &SingleColour, &mvp, 1.0, 0.0, 1.0, 1.0);
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glDisable(GL_CULL_FACE);
-        //Test.draw();
-        //TESTM.draw();
-        //TARDIS.draw();
-        mtm.draw();
+        Test.draw();
+        TARDIS.draw();
         glfwSwapBuffers(render.window);
         glfwPollEvents();
     }

@@ -1,7 +1,7 @@
 class BasicModel {
     protected:
-        float* vertices;
-        unsigned int* indices;
+        GLfloat* vertices;
+        GLuint* indices;
         unsigned int indexnum;
         GLint matloc = 0;
         GLuint shader;
@@ -16,7 +16,7 @@ class BasicModel {
             glUniformMatrix4fv(matloc, 1, GL_FALSE, MVP);
         }
     public:
-        BasicModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Shader* modelshader, glm::mat4* mvp) {
+        BasicModel(GLfloat* vertices_in, int16_t number_of_vertices, GLuint* indices_in, uint16_t number_of_indices, Shader* modelshader, glm::mat4* mvp) {
             shader = modelshader->getshader();
             matloc = glGetUniformLocation(shader, "MVP");
             MVP = (GLfloat*)mvp;
@@ -54,7 +54,7 @@ class SingleColourModel : public BasicModel {
             glUniform4fv(colourloc, 1, colour);
         }
     public:
-        SingleColourModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Shader* modelshader, glm::mat4* mvp, float r, float g, float b, float a) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
+        SingleColourModel(GLfloat* vertices_in, int16_t number_of_vertices, GLuint* indices_in, uint16_t number_of_indices, Shader* modelshader, glm::mat4* mvp, float r, float g, float b, float a) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
             colourloc = glGetUniformLocation(shader, "u_colour");
             colour[0] = r;
             colour[1] = g;
@@ -78,7 +78,7 @@ class ManyTextureModel : public BasicModel {
             glUniform1iv(arrayloc, texnum, samplers);
         }
     public:
-        ManyTextureModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
+        ManyTextureModel(GLfloat* vertices_in, int16_t number_of_vertices, GLuint* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
             arrayloc = glGetUniformLocation(shader, "u_texarray");
             texnum = number_of_textures;
             for (uint8_t i = 0; i < texnum; i++) {
@@ -115,7 +115,7 @@ class SingleTextureModel : public BasicModel {
             glUniform1i(texloc, 0);
         }
     public:
-        SingleTextureModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp){
+        SingleTextureModel(GLfloat* vertices_in, int16_t number_of_vertices, GLuint* indices_in, uint16_t number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp){
             image = picture->gettexture();    
         }
         void draw() override {
@@ -167,7 +167,7 @@ class DispModel : public BasicModel {
             glBufferData(GL_ARRAY_BUFFER, vertnum * sizeof(float) * 9, vertices, GL_STATIC_DRAW);
         }
     public:
-        DispModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp, float x1, float y1, float x2, float y2) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
+        DispModel(GLfloat* vertices_in, int16_t number_of_vertices, GLuint* indices_in, uint16_t number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp, float x1, float y1, float x2, float y2) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
             arrayloc = glGetUniformLocation(shader, "u_texarray");
             texnum = number_of_textures;
             for (uint8_t i = 0; i < texnum; i++) {
@@ -209,7 +209,7 @@ class SubunitModel : public BasicModel {
             glUniform1i(texloc, 0);
         }
     public:
-        SubunitModel(float* vertices_in, int16_t number_of_vertices, unsigned int* indices_in, uint16_t number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
+        SubunitModel(GLfloat* vertices_in, int16_t number_of_vertices, GLuint* indices_in, uint16_t number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
             texloc = glGetUniformLocation(shader, "u_texture");
             image = picture->gettexture();
         }
