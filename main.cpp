@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <inttypes.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

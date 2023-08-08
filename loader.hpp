@@ -11,16 +11,23 @@ class Loader {
         uint32_t NUMBER_OF_INDICES;
         uint16_t INDEX_SIZE;
         uint32_t INDEX_START_OFFSET;
-    public:
-        Loader(){
-            printf("Loader constructed.\n");
-        }
-        int loadfail(const char* errormessage, FILE* file){
-            fprintf(stderr, errormessage);
-            fclose(file);
+        [[gnu::format(printf, 3, 4)]] int loadfail(FILE* file, const char* errormessage, ...){
+            va_list args;
+            va_start(args, errormessage);
+            vfprintf(stderr, errormessage, args);
+            va_end(args);
             free(vertexbuffer);
             free(indexbuffer);
+            if(file != nullptr){
+                fclose(file);
+            }
             return -1;
+        }
+    public:
+        Loader(){
+            vertexbuffer = nullptr;
+            indexbuffer = nullptr;
+            printf("Loader constructed.\n");
         }
         int load_0000(FILE* file){
             fseek(file, 20, SEEK_SET);
@@ -32,7 +39,7 @@ class Loader {
             fread(&INDEX_START_OFFSET, 4, 1, file); 
             vertexbuffer = (GLfloat*) malloc(NUMBER_OF_FLOATS  * 4);
             if(vertexbuffer == nullptr){
-                return loadfail("ERROR: Vertex reading buffer could not be allocated memory.\n", file);
+                return loadfail(file, "ERROR: Vertex reading buffer could not be allocated memory.\n");
             }
             fseek(file, FLOAT_START_OFFSET, SEEK_SET);
             if(FLOAT_SIZE == 8){
@@ -46,13 +53,13 @@ class Loader {
                 fread(vertexbuffer, FLOAT_SIZE, NUMBER_OF_FLOATS, file);
             }
             else{
-                return loadfail("ERROR: Invalid float size.\n", file);
+                return loadfail(file, "ERROR: Invalid float size.\n");
             }
             fseek(file, INDEX_START_OFFSET, SEEK_SET);
             if(INDEX_SIZE == 2){
                 indexbuffer  = (GLuint*) calloc(NUMBER_OF_INDICES, 4);
                 if(indexbuffer == nullptr){
-                    return loadfail("ERROR: Index reading buffer could not be allocated memory.\n", file);
+                    return loadfail(file, "ERROR: Index reading buffer could not be allocated memory.\n");
                 }
                 for(int i = 0; i < NUMBER_OF_INDICES; i++){
                     fread(&indexbuffer[i], INDEX_SIZE, 1, file);
@@ -61,12 +68,12 @@ class Loader {
             else if(INDEX_SIZE == 4){
                 indexbuffer  = (GLuint*) malloc(NUMBER_OF_INDICES * 4);
                 if(indexbuffer == nullptr){
-                    return loadfail("ERROR: Index reading buffer could not be allocated memory.\n", file);
+                    return loadfail(file, "ERROR: Index reading buffer could not be allocated memory.\n");
                 }
                 fread(indexbuffer, INDEX_SIZE, NUMBER_OF_INDICES, file);
             }
             else{
-                return loadfail("ERROR: Invalid index size.\n", file);
+                return loadfail(file, "ERROR: Invalid index size.\n");
             }
             fclose(file);
             return 0;
@@ -74,28 +81,21 @@ class Loader {
         int load(const char* filename){
             FILE* f = fopen(filename, "rb");
             if(f == nullptr){
-                printf("ERROR: %s file could not be found or opened.\n", filename);
-                return -1;
+                return loadfail(f, "ERROR: %s file could not be found or opened.\n", filename);
             }
             char test_footprint[12];
             fread(test_footprint, 1, 12, f);
             if(memcmp(footprint, test_footprint, 12) != 0){
-                printf("ERROR: %s file format unrecognised.\n", filename);
-                fclose(f);
-                return -1;
+                return loadfail(f, "ERROR: %s file format unrecognised.\n", filename);
             }
-
             fread(&MODEL_TYPE, 4, 1, f);
             fread(&FILE_SIZE, 4, 1, f);
             printf("Read contents of file %s (%d bytes)\n", filename, FILE_SIZE);
-
             if(MODEL_TYPE == 0b0000){
                 return load_0000(f);
             }
             else{
-                printf("ERROR: %s model format unrecognised.\n", filename);
-                fclose(f);
-                return -1;
+                return loadfail(f, "ERROR: %s model format unrecognised.\n", filename);
             }
         } 
         uint16_t getfloatsize(){
