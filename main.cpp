@@ -11,11 +11,15 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <SDL2/SDL.h>
-#include <array>
+//#include <array>
 #include "datatypes.hpp"
 #include "model.hpp"
 #include "loader.hpp"
 #include "controller.hpp"
+
+//To-Do:
+//CHECK the proper way to update the contents of a vertex buffer.
+//SETSIZE procedure in model classes?
 
 /*
 SDL_GameController* findController(void) {
@@ -86,7 +90,6 @@ int main(void) {
     Shader TextureShader("shaders/texture_v.glsl", "shaders/texture_f.glsl");
     Texture BlueSquare("textures/bluesquare.png", GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, nullptr);
     Texture Mii("textures/512x512_mii.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
-    //SingleTextureModel A_Key(keycorners, 24, basicindices, 6, &Mii, &TextureShader, &mvp);
     Shader SubunitShader("shaders/subunit_v.glsl", "shaders/subunit_f.glsl");
     Texture TileSubunit("textures/subunit.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
     
@@ -104,13 +107,15 @@ int main(void) {
         return -1;
     }
     SingleColourModel TARDIS(loader.getvertexbuffer(), loader.getfloatcount(), loader.getindexbuffer(), loader.getindexcount(), &SingleColour, &mvp, 0.0, 0.0, 1.0, 1.0);
+    glDisable(GL_CULL_FACE);
     while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glDisable(GL_CULL_FACE);
         Test.draw();
         TARDIS.draw();
+        TARDIS.scaleBase(0.999);
         glfwSwapBuffers(render.window);
         glfwPollEvents();
     }
+    printf("GTL_NMJW closed.\n");
     return 0;
 }
