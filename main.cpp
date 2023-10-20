@@ -3,7 +3,6 @@
 #define GLEW_STATIC
 #include <stb/stb_image.h>
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -38,7 +37,7 @@ int main(void) {
     int height = 600;
     float aspect = (float)width / (float)height;
 
-    Renderer render(width, height, "GTL NMJW", nullptr, nullptr, 1, 0.0f, 0.3f, 0.2f, 0.0f);
+    Renderer render(width, height, "GTL NMJW", 1, 0.0f, 0.3f, 0.2f, 0.0f);
     if (render.window == nullptr) {
         printf("Window Startup Error\n");
         return -1;
@@ -108,13 +107,26 @@ int main(void) {
     }
     SingleColourModel TARDIS(loader.getvertexbuffer(), loader.getfloatcount(), loader.getindexbuffer(), loader.getindexcount(), &SingleColour, &mvp, 0.0, 0.0, 1.0, 1.0);
     glDisable(GL_CULL_FACE);
-    while (glfwGetKey(render.window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(render.window) == 0) {
+    
+    printf("%f\n", TARDIS.getSize().y);
+    TARDIS.translate(0, -(TARDIS.getSize().y * 0.75), 0);
+    GLfloat framenumber = -1.0;
+    GLboolean closewindow = GL_FALSE;
+    SDL_Event Event;
+    while (closewindow == GL_FALSE) {
+        framenumber++; 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Test.draw();
         TARDIS.draw();
-        TARDIS.scaleBase(0.999);
-        glfwSwapBuffers(render.window);
-        glfwPollEvents();
+        TARDIS.translate(-0.001, 0.025 * sin(framenumber/50.0), -0.001);
+        SDL_GL_SwapWindow(render.window);
+        while(SDL_PollEvent(&Event)){
+            if(Event.type == SDL_KEYDOWN) {
+                if (Event.key.keysym.sym == SDLK_ESCAPE) {
+                    closewindow = GL_TRUE;
+                }
+            }
+        }      
     }
     printf("GTL_NMJW closed.\n");
     return 0;

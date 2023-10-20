@@ -144,32 +144,27 @@ class Texture {
 
 class Renderer {
     public:
-        GLFWwindow* window;
-        Renderer(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share, int swapinterval, float red, float green, float blue, float alpha) {
+        SDL_Window* window;
+        SDL_GLContext context;
+        Renderer(int width, int height, const char* title, int swapinterval, float red, float green, float blue, float alpha) {
             //Initialize the library
-            if (!glfwInit()) {
-                printf("GLFW initiation failed\n");
+            if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+                printf("SDL initiation failed\n");
             }
-            printf("GLWF initiated\n");
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    
-            //Create a windowed mode window and its OpenGL context
-            window = glfwCreateWindow(width, height, title, monitor, share);
+            printf("SDL2 initiated\n");
+                
+            window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
             if (window == nullptr) {
-                printf("Failed to create GLFW window\n");
-                glfwTerminate();
+                printf("Failed to create SDL2 window\n");
+                SDL_Quit();
             }
-    
-            //Make the window's context current
-            glfwMakeContextCurrent(window);
-            glfwSwapInterval(swapinterval);
+
+            context = SDL_GL_CreateContext(window);
+            SDL_GL_SetSwapInterval(swapinterval);
     
             if (glewInit() != GLEW_OK) {
-                printf("Oh dear! It seems that for some reason, GLEW didn't initialise correctly.\n");
-                glfwTerminate();
+                printf("Failed to initialise GLEW.\n");
+                SDL_Quit();
             }
     
             printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
@@ -177,17 +172,6 @@ class Renderer {
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             
             glClearColor(red, green, blue, alpha);
-            // Ensure we can capture the escape key being pressed below
-            glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    
-            
-            /*
-            // Hide the mouse and enable unlimited mouvement
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            // Set the mouse at the center of the screen
-            glfwPollEvents();
-            glfwSetCursorPos(window, width / 2, height / 2);
-            */
     
             // Enable depth test
             glEnable(GL_DEPTH_TEST);
@@ -198,6 +182,8 @@ class Renderer {
             glCullFace(GL_BACK);
         }
         ~Renderer() {
+            SDL_DestroyWindow(window);
             free(window);
+            SDL_Quit();
         }
 };
