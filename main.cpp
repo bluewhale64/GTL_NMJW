@@ -3,75 +3,61 @@
 #define GLEW_STATIC
 #include <stb/stb_image.h>
 #include <GL/glew.h>
-#include <stdio.h>
+#include <cstdio>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <inttypes.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <SDL2/SDL.h>
-//#include <array>
 #include "datatypes.hpp"
 #include "model.hpp"
 #include "loader.hpp"
-#include "controller.hpp"
+#include "controls.hpp"
 
-//To-Do:
-//CHECK the proper way to update the contents of a vertex buffer.
-//SETSIZE procedure in model classes?
+//Add controller connection and reading
+//And controller constructor
 
 /*
-SDL_GameController* findController(void) {
+SDL_GameController *findController() {
     for (int i = 0; i < SDL_NumJoysticks(); i++) {
         if (SDL_IsGameController(i)) {
             return SDL_GameControllerOpen(i);
         }
     }
+
     return nullptr;
 }
-*/
 
-int main(void) {
-
-    int width = 800;
-    int height = 600;
-    float aspect = (float)width / (float)height;
-
-    Renderer render(width, height, "GTL NMJW", 1, 0.0f, 0.3f, 0.2f, 0.0f);
-    if (render.window == nullptr) {
-        printf("Window Startup Error\n");
-        return -1;
-    }
-
-    Loader loader;
-
-    /*
-    if (SDL_Init(SDL_INIT_GAMECONTROLLER) < 0) {
-        printf("SDL could not initialize! SDL Error: %s\n", SDL_GetError());
-        return 1;
-    }
-
-    
-    SDL_GameController* controller = findController();
-    
-    SDL_Event event;
-    switch (event.type) {
-        case SDL_CONTROLLERDEVICEADDED:
+    SDL_GameController *controller = findController();
+    switch (Event.type) {
+    case SDL_CONTROLLERDEVICEADDED:
         if (!controller) {
-            controller = SDL_GameControllerOpen(event.cdevice.which);
+            controller = SDL_GameControllerOpen(Event.cdevice.which);
         }
-        break;
-        case SDL_CONTROLLERDEVICEREMOVED:
-        if (controller && event.cdevice.which == SDL_JoystickInstanceID(
+    break;
+    case SDL_CONTROLLERDEVICEREMOVED:
+        if (controller && Event.cdevice.which == SDL_JoystickInstanceID(
             SDL_GameControllerGetJoystick(controller))) {
             SDL_GameControllerClose(controller);
             controller = findController();
         }
         break;
     }
-    */
+*/
 
-    glm::mat4 P = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+int main(void) {
+
+    Renderer render("GTL NMJW", 1, 0.0f, 0.3f, 0.2f, 0.0f);
+    if (render.window == nullptr) {
+        std::printf("Window Startup Error\n");
+        return -1;
+    }
+    
+    Controller controller;
+    Loader loader;
+
+    glm::mat4 P = glm::perspective(glm::radians(45.0f), render.getAspect(), 0.1f, 100.0f);
     glm::mat4 V = glm::lookAt(
         glm::vec3(1, 0, -10),  // Camera is at (0,0,0) in World Space
         glm::vec3(1, 0, 10),   // Looks this position - Remeber, +Z is INTO the screen.
@@ -86,6 +72,7 @@ int main(void) {
          0.5,  0.5, 5.0, 1.0, 1.0, 0,
         -0.5,  0.5, 5.0, 0.0, 1.0, 0
     };
+
     Shader TextureShader("shaders/texture_v.glsl", "shaders/texture_f.glsl");
     Texture BlueSquare("textures/bluesquare.png", GL_NEAREST, GL_NEAREST, GL_REPEAT, GL_REPEAT, nullptr);
     Texture Mii("textures/512x512_mii.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
@@ -102,32 +89,28 @@ int main(void) {
 
     Shader SingleColour("shaders/singlecolour_v.glsl", "shaders/singlecolour_f.glsl");
     if(loader.load("assets/TARDIS_blank.bin") != 0){
-        printf("Model load failed\n");
+        std::printf("Model load failed\n");
         return -1;
     }
     SingleColourModel TARDIS(loader.getvertexbuffer(), loader.getfloatcount(), loader.getindexbuffer(), loader.getindexcount(), &SingleColour, &mvp, 0.0, 0.0, 1.0, 1.0);
     glDisable(GL_CULL_FACE);
     
-    printf("%f\n", TARDIS.getSize().y);
     TARDIS.translate(0, -(TARDIS.getSize().y * 0.75), 0);
     GLfloat framenumber = -1.0;
-    GLboolean closewindow = GL_FALSE;
-    SDL_Event Event;
-    while (closewindow == GL_FALSE) {
+    
+    bool ESC = false;
+    
+    while (ESC == false) {
         framenumber++; 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Test.draw();
         TARDIS.draw();
-        TARDIS.translate(-0.001, 0.025 * sin(framenumber/50.0), -0.001);
+        TARDIS.translate(-0.01, 0.025 * sin(framenumber/50.0), -0.001);
         SDL_GL_SwapWindow(render.window);
-        while(SDL_PollEvent(&Event)){
-            if(Event.type == SDL_KEYDOWN) {
-                if (Event.key.keysym.sym == SDLK_ESCAPE) {
-                    closewindow = GL_TRUE;
-                }
-            }
-        }      
+        if(controller.keycheck(&ESC) == true){
+            render.toggleFullscreen();
+        }
     }
-    printf("GTL_NMJW closed.\n");
+    std::printf("GTL_NMJW closed.\n");
     return 0;
 }

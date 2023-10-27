@@ -25,7 +25,7 @@ class Shader {
         GLint getuniformlocation(const char* uniformname) {
             GLint location = glGetUniformLocation(program, uniformname);
             if (location == -1) {
-                printf("WARNING: Uniform \"%s\" does not exist!\n", (char*)uniformname);
+                std::printf("WARNING: Uniform \"%s\" does not exist!\n", (char*)uniformname);
             }
             return location;
         }
@@ -55,15 +55,15 @@ class Shader {
                     glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
                     char* message = (char*)malloc(len * sizeof(char));
                     glGetShaderInfoLog(id, len, &len, message);
-                    printf("%s failed to compile!\n", shadername);
-                    printf("%s\n", message);
+                    std::printf("%s failed to compile!\n", shadername);
+                    std::printf("%s\n", message);
                     glDeleteShader(id);
                     return 0;
                 }
                 return id;
             }
             else {
-                printf("Shader %s failed to generate.\n", shadername);
+                std::printf("Shader %s failed to generate.\n", shadername);
                 return -1;
             }
         }
@@ -82,12 +82,12 @@ class Shader {
                     return(shadercode);
                 }
                 else {
-                    printf("const char* array shadercode could not be allocated memory, and was a nullptr pointer.\n");
+                    std::printf("const char* array shadercode could not be allocated memory, and was a nullptr pointer.\n");
                     return(nullptr);
                 }
             }
             else {
-                printf("Shader file %s could not be found/opened.", filepath);
+                std::printf("Shader file %s could not be found/opened.", filepath);
                 return nullptr;
             }
         }
@@ -100,7 +100,7 @@ class Texture {
             stbi_set_flip_vertically_on_load(1);
             unsigned char* localbuffer = stbi_load(imagefile, &width, &height, &bpp, 4);
             if (!localbuffer) {
-                printf("Image file %s could not be found/opened\n", imagefile);
+                std::printf("Image file %s could not be found/opened\n", imagefile);
             }
             glGenTextures(1, &texture);
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -143,19 +143,26 @@ class Texture {
 };
 
 class Renderer {
+    private:
+        SDL_Event event;
+        SDL_GLContext context;
+        SDL_DisplayMode displaymode;
+        GLboolean fullscreen = GL_FALSE;
     public:
         SDL_Window* window;
-        SDL_GLContext context;
-        Renderer(int width, int height, const char* title, int swapinterval, float red, float green, float blue, float alpha) {
+        Renderer(const char* title, int swapinterval, float red, float green, float blue, float alpha) {
             //Initialize the library
-            if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-                printf("SDL initiation failed\n");
+            if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) != 0) {
+                std::printf("SDL initiation failed\n");
             }
-            printf("SDL2 initiated\n");
-                
-            window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
+            std::printf("SDL2 initiated\n");
+
+            fullscreen = GL_FALSE;
+            SDL_GetDesktopDisplayMode(0, &displaymode);
+
+            window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED, displaymode.w, displaymode.h, SDL_WINDOW_OPENGL);
             if (window == nullptr) {
-                printf("Failed to create SDL2 window\n");
+                std::printf("Failed to create SDL2 window\n");
                 SDL_Quit();
             }
 
@@ -163,11 +170,11 @@ class Renderer {
             SDL_GL_SetSwapInterval(swapinterval);
     
             if (glewInit() != GLEW_OK) {
-                printf("Failed to initialise GLEW.\n");
+                std::printf("Failed to initialise GLEW.\n");
                 SDL_Quit();
             }
-    
-            printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+
+            std::printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             
@@ -181,9 +188,29 @@ class Renderer {
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
         }
+        void toggleFullscreen(){
+            if (fullscreen == GL_FALSE){
+                SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+                SDL_ShowCursor(SDL_DISABLE);
+                fullscreen = GL_TRUE;
+            }
+            else{
+                SDL_SetWindowFullscreen(window, 0);
+                SDL_ShowCursor(SDL_ENABLE);
+                fullscreen = GL_FALSE;
+            }
+        }
+        int getWidth(){
+            return displaymode.w;
+        }
+        int getHeight(){
+            return displaymode.h;
+        }
+        float getAspect(){
+            return (float)displaymode.w/(float)displaymode.h;
+        }
         ~Renderer() {
             SDL_DestroyWindow(window);
-            free(window);
             SDL_Quit();
         }
 };

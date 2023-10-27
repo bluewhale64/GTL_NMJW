@@ -14,7 +14,7 @@ class Loader {
         [[gnu::format(printf, 3, 4)]] int loadfail(FILE* file, const char* errormessage, ...){
             va_list args;
             va_start(args, errormessage);
-            vfprintf(stderr, errormessage, args);
+            std::vfprintf(stderr, errormessage, args);
             va_end(args);
             free(vertexbuffer);
             free(indexbuffer);
@@ -27,7 +27,7 @@ class Loader {
         Loader(){
             vertexbuffer = nullptr;
             indexbuffer = nullptr;
-            printf("Loader constructed.\n");
+            std::printf("Loader constructed.\n");
         }
         int load_0000(FILE* file){
             fseek(file, 20, SEEK_SET);
@@ -90,7 +90,7 @@ class Loader {
             }
             fread(&MODEL_TYPE, 4, 1, f);
             fread(&FILE_SIZE, 4, 1, f);
-            printf("Read contents of file %s (%d bytes)\n", filename, FILE_SIZE);
+            std::printf("Read contents of file %s (%d bytes)\n", filename, FILE_SIZE);
             if(MODEL_TYPE == 0b0000){
                 return load_0000(f);
             }

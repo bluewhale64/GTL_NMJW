@@ -102,21 +102,14 @@ class BasicModel {
                 vertices[stride * i + 1] = ((vertices[stride * i + 1] - stats[1][1]) * scalar) + stats[1][1];
                 vertices[stride * i + 2] = ((vertices[stride * i + 2] - stats[2][2]) * scalar) + stats[2][2];
             }
-            stats[0][3] = stats[0][3] * scalar;
-            stats[0][0] = stats[0][2] + stats[0][3] / 2;
-            stats[0][1] = stats[0][2] - stats[0][3] / 2;
-            stats[2][3] = stats[2][3] * scalar;
-            stats[2][0] = stats[2][2] + stats[2][3] / 2;
-            stats[2][1] = stats[2][2] - stats[2][3] / 2;
-            stats[1][3] = stats[1][3] * scalar;
-            stats[1][0] = stats[1][2] + stats[1][3];
+            for(GLuint i = 0; i < 3; i++){
+                stats[i][3] = stats[i][3] * scalar;
+                stats[i][0] = stats[i][2] + stats[i][3] / 2;
+                stats[i][1] = stats[i][2] - stats[i][3] / 2;
+            }
+            stats[1][1] += stats[2][3] / 2;
             regeneratevertexbuffer();
-        }
-        /*
-        void setSize(GLfloat x, GLfloat y, GLfloat z){
-            ;
-        }
-        */
+        } 
         virtual void draw() {
             drawSetup();
             glEnableVertexAttribArray(0);
