@@ -4,60 +4,37 @@
 #include <stb/stb_image.h>
 #include <GL/glew.h>
 #include <cstdio>
-#include <stdlib.h>
+#include <cstdlib>
 #include <stdarg.h>
 #include <inttypes.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <SDL2/SDL.h>
-#include "datatypes.hpp"
+
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_gamepad.h>
+#include <SDL3/SDL_joystick.h>
+
+#include "renderer.hpp"
 #include "model.hpp"
 #include "loader.hpp"
 #include "controls.hpp"
 
-//Add controller connection and reading
-//And controller constructor
-
-/*
-SDL_GameController *findController() {
-    for (int i = 0; i < SDL_NumJoysticks(); i++) {
-        if (SDL_IsGameController(i)) {
-            return SDL_GameControllerOpen(i);
-        }
-    }
-
-    return nullptr;
-}
-
-    SDL_GameController *controller = findController();
-    switch (Event.type) {
-    case SDL_CONTROLLERDEVICEADDED:
-        if (!controller) {
-            controller = SDL_GameControllerOpen(Event.cdevice.which);
-        }
-    break;
-    case SDL_CONTROLLERDEVICEREMOVED:
-        if (controller && Event.cdevice.which == SDL_JoystickInstanceID(
-            SDL_GameControllerGetJoystick(controller))) {
-            SDL_GameControllerClose(controller);
-            controller = findController();
-        }
-        break;
-    }
-*/
-
 int main(void) {
 
-    Renderer render("GTL NMJW", 1, 0.0f, 0.3f, 0.2f, 0.0f);
-    if (render.window == nullptr) {
+    Renderer::init("GTL NMJW", 1, 0.0f, 0.3f, 0.2f, 0.0f);
+    if (Renderer::getWindow() == nullptr) {
         std::printf("Window Startup Error\n");
         return -1;
     }
-    
-    Controller controller;
-    Loader loader;
 
-    glm::mat4 P = glm::perspective(glm::radians(45.0f), render.getAspect(), 0.1f, 100.0f);
+    SDL_Gamepad* controller = nullptr;
+    //move controller into render class?
+    //make a controller class?
+    controller = Controls::findExistingGamepad();
+    Loader::init();
+
+    glm::mat4 P = glm::perspective(glm::radians(45.0f), Renderer::getAspect(), 0.1f, 100.0f);
     glm::mat4 V = glm::lookAt(
         glm::vec3(1, 0, -10),  // Camera is at (0,0,0) in World Space
         glm::vec3(1, 0, 10),   // Looks this position - Remeber, +Z is INTO the screen.
@@ -88,29 +65,61 @@ int main(void) {
     SubunitModel Test(subcorners, 36, basicindices, 6, &TileSubunit, &SubunitShader, &mvp);
 
     Shader SingleColour("shaders/singlecolour_v.glsl", "shaders/singlecolour_f.glsl");
-    if(loader.load("assets/TARDIS_blank.bin") != 0){
+    if(Loader::load("assets/TARDIS_blank.bin") != 0){
         std::printf("Model load failed\n");
         return -1;
     }
-    SingleColourModel TARDIS(loader.getvertexbuffer(), loader.getfloatcount(), loader.getindexbuffer(), loader.getindexcount(), &SingleColour, &mvp, 0.0, 0.0, 1.0, 1.0);
+    SingleColourModel TARDIS(Loader::getVertexBuffer(), Loader::getFloatCount(), Loader::getIndexBuffer(), Loader::getIndexCount(), &SingleColour, &mvp, 0.0, 0.0, 1.0, 1.0);
     glDisable(GL_CULL_FACE);
     
     TARDIS.translate(0, -(TARDIS.getSize().y * 0.75), 0);
     GLfloat framenumber = -1.0;
     
-    bool ESC = false;
     
-    while (ESC == false) {
+    SDL_Event event;
+    bool quit = false;
+    while (quit == false) {
         framenumber++; 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Test.draw();
         TARDIS.draw();
-        TARDIS.translate(-0.01, 0.025 * sin(framenumber/50.0), -0.001);
-        SDL_GL_SwapWindow(render.window);
-        if(controller.keycheck(&ESC) == true){
-            render.toggleFullscreen();
+        TARDIS.translate(0, 0.025 * sin(framenumber/50.0), 0);
+        SDL_GL_SwapWindow(Renderer::getWindow());
+
+        //Poll Events
+        while(SDL_PollEvent(&event)){
+            switch (event.type){
+            case SDL_EVENT_QUIT:
+                quit = true;
+            case SDL_EVENT_GAMEPAD_ADDED:
+                std::printf("Controller connected.\n");
+                if (controller == nullptr) {
+                    controller = SDL_OpenGamepad(event.gdevice.which);
+                    std::printf("Controller activated.\n");
+                }
+            case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+                if(event.gaxis.axis > -1){
+                    Controls::setAxis(event.gaxis.axis, event.gaxis.value);
+                }
+            case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+                if(event.gbutton.button > -1){
+                    Controls::pressButton(event.gbutton.button);
+                }
+            case SDL_EVENT_GAMEPAD_BUTTON_UP:
+                if(event.gbutton.button > -1){
+                    Controls::pressButton(event.gbutton.button);
+                }
+            //case SDL_EVENT_GAMEPAD_REMOVED:
+            //wait until stable release
+            //necessary function implementations do not exist
+            }
         }
+        //End of Event Polling
+        Controls::updateFlags();
     }
+    SDL_CloseGamepad(controller);
+    Renderer::stop();
+    Loader::stop();
     std::printf("GTL_NMJW closed.\n");
     return 0;
 }

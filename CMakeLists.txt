@@ -7,20 +7,20 @@ option("GTL_NMJW_CONSOLE" "Use vendored libraries" OFF)
 if("GTL_NMJW_CONSOLE")
     add_subdirectory(vendored/sdl EXCLUDE_FROM_ALL)
 else()
-    # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
-    find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
+    # 1. Look for a SDL3 package, 2. look for the SDL3 component and 3. fail if none can be found
+    find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3)
 
-    # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
-    find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
+    # 1. Look for a SDL3 package, 2. Look for the SDL3maincomponent and 3. DO NOT fail when SDL3main is not available
+    find_package(SDL3 REQUIRED CONFIG COMPONENTS SDL3main)
 endif()
 
 add_executable("GTL_NMJW" "main.cpp")
 find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(SDL2 REQUIRED)
+find_package(SDL3 REQUIRED)
 
-if(TARGET SDL2::SDL2main)
-    # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
-    target_link_libraries("GTL_NMJW" PRIVATE SDL2::SDL2main)
+if(TARGET SDL3::SDL3main)
+    # It has an implicit dependency on SDL3 functions, so it MUST be added before SDL3::SDL3 (or SDL3::SDL3-static)
+    target_link_libraries("GTL_NMJW" PRIVATE SDL3::SDL3main)
 endif()
-target_link_libraries("GTL_NMJW" PRIVATE GLEW::GLEW OpenGL::GL SDL2::SDL2)
+target_link_libraries("GTL_NMJW" PRIVATE GLEW::GLEW OpenGL::GL SDL3::SDL3)
