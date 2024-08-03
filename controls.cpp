@@ -26,18 +26,66 @@ SDL_Gamepad* Controls::findExistingGamepad(){
     printf("No controllers connected.\n");
     return nullptr;
 }
+bool Controls::edge(uint8_t button){
+    if(buttons_current[button] != buttons_previous[button]){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+bool Controls::fallingEdge(uint8_t button){
+    if(!buttons_current[button] && buttons_previous[button]){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+int16_t* Controls::getAxes(){
+    return axes_current;
+}
+int16_t Controls::getAxis(uint8_t axis){
+    return axes_current[axis];
+}
+bool Controls::getButton(uint8_t button){
+    return buttons_current[button];
+}
+bool* Controls::getButtons(){
+    return buttons_current;
+}
+int16_t* Controls::getPreviousAxes(){
+    return axes_previous;
+}
+int16_t Controls::getPreviousAxis(uint8_t axis){
+    return axes_previous[axis];
+}
+bool Controls::getPreviousButton(uint8_t button){
+    return buttons_previous[button];
+}
+bool* Controls::getPreviousButtons(){
+    return buttons_previous;
+}
 void Controls::pressButton(uint8_t button){
-    if(button < 26 && button > -1){
+    if(button < 26 && button != SDL_GAMEPAD_BUTTON_INVALID){
         buttons_current[button] = true;
-    }   
+    }  
+}
+bool Controls::risingEdge(uint8_t button){
+    if(buttons_current[button] && !buttons_previous[button]){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 void Controls::releaseButton(uint8_t button){
-    if(button < 26 && button > -1){
+    if(button < 26 && button != SDL_GAMEPAD_BUTTON_INVALID){
         buttons_current[button] = false;
     }
 }
 void Controls::setAxis(uint8_t axis, int16_t value){
-    if(axis < 7 && axis > -1){
+    if(axis < 7 && axis != SDL_GAMEPAD_AXIS_INVALID){
         axes_current[axis] = value;
     }
 }

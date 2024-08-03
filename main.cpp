@@ -22,6 +22,7 @@
 
 int main(void) {
 
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
     Renderer::init("GTL NMJW", 1, 0.0f, 0.3f, 0.2f, 0.0f);
     if (Renderer::getWindow() == nullptr) {
         std::printf("Window Startup Error\n");
@@ -92,29 +93,49 @@ int main(void) {
             case SDL_EVENT_QUIT:
                 quit = true;
             case SDL_EVENT_GAMEPAD_ADDED:
-                std::printf("Controller connected.\n");
+                //seems to trigger at end of program - when gamepad closed
+                //std::printf("Controller connected.\n");
                 if (controller == nullptr) {
                     controller = SDL_OpenGamepad(event.gdevice.which);
                     std::printf("Controller activated.\n");
                 }
             case SDL_EVENT_GAMEPAD_AXIS_MOTION:
-                if(event.gaxis.axis > -1){
+                printf("Move %i\n", event.gaxis.axis);
+                if(event.gaxis.axis != SDL_GAMEPAD_AXIS_INVALID){
                     Controls::setAxis(event.gaxis.axis, event.gaxis.value);
                 }
-            case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
-                if(event.gbutton.button > -1){
-                    Controls::pressButton(event.gbutton.button);
-                }
             case SDL_EVENT_GAMEPAD_BUTTON_UP:
-                if(event.gbutton.button > -1){
+                printf("Release %i\n", event.gbutton.button);
+                if(event.gbutton.button != SDL_GAMEPAD_BUTTON_INVALID && Controls::getPreviousButton(event.gbutton.button)){
+                    Controls::releaseButton(event.gbutton.button);
+                }
+            case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+                printf("Press %i\n", event.gbutton.button);
+                if(event.gbutton.button != SDL_GAMEPAD_BUTTON_INVALID && !Controls::getPreviousButton(event.gbutton.button)){
                     Controls::pressButton(event.gbutton.button);
                 }
+            
+            
             //case SDL_EVENT_GAMEPAD_REMOVED:
             //wait until stable release
             //necessary function implementations do not exist
             }
         }
         //End of Event Polling
+        
+        if(Controls::getButton(SDL_GAMEPAD_BUTTON_DPAD_LEFT)){
+            TARDIS.translate(0.01, 0, 0);
+        }
+        if(Controls::getButton(SDL_GAMEPAD_BUTTON_DPAD_RIGHT)){
+            TARDIS.translate(-0.01, 0, 0);
+        }
+        if(Controls::getButton(SDL_GAMEPAD_BUTTON_DPAD_UP)){
+            TARDIS.translate(0, 0, 0.01);
+        }
+        if(Controls::getButton(SDL_GAMEPAD_BUTTON_DPAD_DOWN)){
+            TARDIS.translate(0, 0, -0.01);
+        }
+        //update control flags right at the end of the main loop
         Controls::updateFlags();
     }
     SDL_CloseGamepad(controller);
