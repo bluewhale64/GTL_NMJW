@@ -20,7 +20,7 @@ SDL_Gamepad* Controls::findExistingGamepad(){
         if (SDL_IsGamepad(i)){
             printf("Controller detected.\n");
             //connect to first detected controller only
-            return SDL_OpenGamepad(i);;
+            return SDL_OpenGamepad(i);
         }
     }
     printf("No controllers connected.\n");

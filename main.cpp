@@ -32,7 +32,12 @@ int main(void) {
     SDL_Gamepad* controller = nullptr;
     //move controller into render class?
     //make a controller class?
+    char* mappingstring = nullptr;
     controller = Controls::findExistingGamepad();
+    if(controller){
+        mappingstring = SDL_GetGamepadMapping(controller);
+        std::printf("Mapping:\n%s\n", mappingstring);
+    }
     Loader::init();
 
     glm::mat4 P = glm::perspective(glm::radians(45.0f), Renderer::getAspect(), 0.1f, 100.0f);
@@ -90,49 +95,53 @@ int main(void) {
         //Poll Events
         while(SDL_PollEvent(&event)){
             switch (event.type){
+            //switch-case functions like goto, not if-else.
+            //every case must end with a break statement.
             case SDL_EVENT_QUIT:
                 quit = true;
+                break;
             case SDL_EVENT_GAMEPAD_ADDED:
-                //seems to trigger at end of program - when gamepad closed
-                //std::printf("Controller connected.\n");
+                std::printf("Controller connected.\n");
                 if (controller == nullptr) {
                     controller = SDL_OpenGamepad(event.gdevice.which);
                     std::printf("Controller activated.\n");
+                    mappingstring = SDL_GetGamepadMapping(controller);
+                    std::printf("%s\n", mappingstring);
                 }
+                break;
             case SDL_EVENT_GAMEPAD_AXIS_MOTION:
-                printf("Move %i\n", event.gaxis.axis);
                 if(event.gaxis.axis != SDL_GAMEPAD_AXIS_INVALID){
                     Controls::setAxis(event.gaxis.axis, event.gaxis.value);
                 }
+                break;
             case SDL_EVENT_GAMEPAD_BUTTON_UP:
-                printf("Release %i\n", event.gbutton.button);
-                if(event.gbutton.button != SDL_GAMEPAD_BUTTON_INVALID && Controls::getPreviousButton(event.gbutton.button)){
+                if(event.gbutton.button != SDL_GAMEPAD_BUTTON_INVALID){
                     Controls::releaseButton(event.gbutton.button);
                 }
+                break;
             case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
-                printf("Press %i\n", event.gbutton.button);
-                if(event.gbutton.button != SDL_GAMEPAD_BUTTON_INVALID && !Controls::getPreviousButton(event.gbutton.button)){
+                if(event.gbutton.button != SDL_GAMEPAD_BUTTON_INVALID){
                     Controls::pressButton(event.gbutton.button);
                 }
-            
-            
+                break;
             //case SDL_EVENT_GAMEPAD_REMOVED:
+                //break;
             //wait until stable release
             //necessary function implementations do not exist
             }
         }
         //End of Event Polling
         
-        if(Controls::getButton(SDL_GAMEPAD_BUTTON_DPAD_LEFT)){
+        if(Controls::getButton(SDL_GAMEPAD_BUTTON_WEST)){
             TARDIS.translate(0.01, 0, 0);
         }
-        if(Controls::getButton(SDL_GAMEPAD_BUTTON_DPAD_RIGHT)){
+        if(Controls::getButton(SDL_GAMEPAD_BUTTON_EAST)){
             TARDIS.translate(-0.01, 0, 0);
         }
-        if(Controls::getButton(SDL_GAMEPAD_BUTTON_DPAD_UP)){
+        if(Controls::getButton(SDL_GAMEPAD_BUTTON_NORTH)){
             TARDIS.translate(0, 0, 0.01);
         }
-        if(Controls::getButton(SDL_GAMEPAD_BUTTON_DPAD_DOWN)){
+        if(Controls::getButton(SDL_GAMEPAD_BUTTON_SOUTH)){
             TARDIS.translate(0, 0, -0.01);
         }
         //update control flags right at the end of the main loop

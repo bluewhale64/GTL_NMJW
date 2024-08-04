@@ -11,7 +11,7 @@ namespace{
 }
 void Renderer::init(const char* title, int swapinterval, float red, float green, float blue, float alpha) {
     //Initialize the library
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD) != 0) {
         std::printf("SDL initiation failed.\n");
     }
     std::printf("SDL3 initiated.\n");
