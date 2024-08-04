@@ -32,12 +32,7 @@ int main(void) {
     SDL_Gamepad* controller = nullptr;
     //move controller into render class?
     //make a controller class?
-    char* mappingstring = nullptr;
     controller = Controls::findExistingGamepad();
-    if(controller){
-        mappingstring = SDL_GetGamepadMapping(controller);
-        std::printf("Mapping:\n%s\n", mappingstring);
-    }
     Loader::init();
 
     glm::mat4 P = glm::perspective(glm::radians(45.0f), Renderer::getAspect(), 0.1f, 100.0f);
@@ -105,8 +100,6 @@ int main(void) {
                 if (controller == nullptr) {
                     controller = SDL_OpenGamepad(event.gdevice.which);
                     std::printf("Controller activated.\n");
-                    mappingstring = SDL_GetGamepadMapping(controller);
-                    std::printf("%s\n", mappingstring);
                 }
                 break;
             case SDL_EVENT_GAMEPAD_AXIS_MOTION:
