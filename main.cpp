@@ -33,7 +33,6 @@ int main(void) {
     //move controller into render class?
     //make a controller class?
     controller = Controls::findExistingGamepad();
-    Loader::init();
 
     glm::mat4 P = glm::perspective(glm::radians(45.0f), Renderer::getAspect(), 0.1f, 100.0f);
     glm::mat4 V = glm::lookAt(

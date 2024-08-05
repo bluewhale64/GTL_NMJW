@@ -125,15 +125,15 @@ void Texture::bindTexture(unsigned int slot) {
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(GL_TEXTURE_2D, texture);
 }
-void Texture::unbindTexture(void) {
+void Texture::unbindTexture() {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 Texture::~Texture() {
     glDeleteTextures(1, &texture);
 }
 
-BasicModel::BasicModel(GLfloat* vertices_in, GLuint number_of_vertices, GLuint* indices_in, GLuint number_of_indices, Shader* modelshader, glm::mat4* mvp) {
-    floatnum = number_of_vertices;
+BasicModel::BasicModel(GLfloat* vertices_in, GLuint number_of_floats, GLuint* indices_in, GLuint number_of_indices, Shader* modelshader, glm::mat4* mvp) {
+    floatnum = number_of_floats;
     indexnum = number_of_indices;
     stride = 3;
     vertexcount = (GLuint)(floatnum / stride);
@@ -237,7 +237,7 @@ void BasicModel::draw() {
 }
 BasicModel::~BasicModel() {}
 
-SingleColourModel::SingleColourModel(GLfloat* vertices_in, GLuint number_of_vertices, GLuint* indices_in, GLuint number_of_indices, Shader* modelshader, glm::mat4* mvp, float r, float g, float b, float a) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
+SingleColourModel::SingleColourModel(GLfloat* vertices_in, GLuint number_of_floats, GLuint* indices_in, GLuint number_of_indices, Shader* modelshader, glm::mat4* mvp, float r, float g, float b, float a) : BasicModel(vertices_in, number_of_floats, indices_in, number_of_indices, modelshader, mvp) {
     colourloc = glGetUniformLocation(shader, "u_colour");
     colour[0] = r;
     colour[1] = g;
@@ -253,7 +253,7 @@ void SingleColourModel::drawSetup(){
 }
 SingleColourModel::~SingleColourModel(){}
 
-ManyTextureModel::ManyTextureModel(GLfloat* vertices_in, GLuint number_of_vertices, GLuint* indices_in, GLuint number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
+ManyTextureModel::ManyTextureModel(GLfloat* vertices_in, GLuint number_of_floats, GLuint* indices_in, GLuint number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_floats, indices_in, number_of_indices, modelshader, mvp) {
             stride = 6;
             arrayloc = glGetUniformLocation(shader, "u_texarray");
             texnum = number_of_textures;
@@ -285,7 +285,7 @@ void ManyTextureModel::draw(){
 }
 ManyTextureModel::~ManyTextureModel(){}
 
-SingleTextureModel::SingleTextureModel(GLfloat* vertices_in, GLuint number_of_vertices, GLuint* indices_in, GLuint number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp){
+SingleTextureModel::SingleTextureModel(GLfloat* vertices_in, GLuint number_of_floats, GLuint* indices_in, GLuint number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_floats, indices_in, number_of_indices, modelshader, mvp){
     stride = 5;
     if(picture != nullptr){
         image = picture->getTexture(); 
@@ -309,7 +309,7 @@ void SingleTextureModel::draw(){
 }
 SingleTextureModel::~SingleTextureModel(){}
 
-DispModel::DispModel(GLfloat* vertices_in, GLuint number_of_vertices, GLuint* indices_in, GLuint number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp, float x1, float y1, float x2, float y2) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
+DispModel::DispModel(GLfloat* vertices_in, GLuint number_of_floats, GLuint* indices_in, GLuint number_of_indices, Texture** texturearray, uint8_t number_of_textures, Shader* modelshader, glm::mat4* mvp, float x1, float y1, float x2, float y2) : BasicModel(vertices_in, number_of_floats, indices_in, number_of_indices, modelshader, mvp) {
     stride = 9;
     arrayloc = glGetUniformLocation(shader, "u_texarray");
     texnum = number_of_textures;
@@ -358,7 +358,7 @@ void DispModel::draw(){
 }
 DispModel::~DispModel(){}
 
-SubunitModel::SubunitModel(GLfloat* vertices_in, GLuint number_of_vertices, GLuint* indices_in, GLuint number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_vertices, indices_in, number_of_indices, modelshader, mvp) {
+SubunitModel::SubunitModel(GLfloat* vertices_in, GLuint number_of_floats, GLuint* indices_in, GLuint number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp) : BasicModel(vertices_in, number_of_floats, indices_in, number_of_indices, modelshader, mvp) {
     stride = 9;
     texloc = glGetUniformLocation(shader, "u_texture");
     image = picture->getTexture();

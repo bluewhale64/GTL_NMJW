@@ -1,12 +1,23 @@
 #include "renderer.hpp"
 #include <GL/glew.h>
 
+/// @brief This anonymous (unnamed) namespace holds the rendering engine flags.
+///
+/// It can't be accessed by functions written outsie of this file (renderer.cpp).
+///
+/// The functions here can access the data and pass it to code outside this file.
 namespace{
-    SDL_Event event;
+    /// @brief The OpenGL rendering context for the window.
+    ///
+    /// Enables SDL to collect the rendered output from OpenGL and display it in the window.
     SDL_GLContext context;
+    /// @brief  The instance ID handle for the display window.
     SDL_DisplayID displayid;
+    /// @brief A pointer to an SDL_DisplayMode struct containing the display flags.
     const SDL_DisplayMode* displaymode;
+    /// @brief A flag to remember if the window is currently fullscreen or not.
     GLboolean fullscreen = GL_FALSE;
+    /// @brief A pointer to the SDL window used by the application.
     SDL_Window* window;
 }
 void Renderer::init(const char* title, int swapinterval, float red, float green, float blue, float alpha) {
