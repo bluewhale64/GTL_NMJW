@@ -150,7 +150,7 @@ class BasicModel {
         /// @brief Repopulates the vertex buffer with the vertices.
         ///
         /// Used if the vertex data has changed, such as the model being moved or scaled.
-        void regenerateVertexBuffer();
+        void regenerateVertexBuffer(GLfloat* new_vertices);
         /// @brief Prepares the model for drawing by binding the shader, any textures being used, and sets relevant uniforms.
         virtual void drawSetup();
     public:

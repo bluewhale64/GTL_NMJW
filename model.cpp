@@ -166,9 +166,9 @@ BasicModel::BasicModel(GLfloat* vertices_in, GLuint number_of_floats, GLuint* in
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexnum * sizeof(GLfloat), indices, GL_DYNAMIC_DRAW);
 }
-void BasicModel::regenerateVertexBuffer(){
+void BasicModel::regenerateVertexBuffer(GLfloat* new_vertices){
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, floatnum * sizeof(GLfloat), vertices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, floatnum * sizeof(GLfloat), new_vertices, GL_DYNAMIC_DRAW);
 }
 void BasicModel::drawSetup(){
     glUseProgram(shader);
@@ -199,7 +199,7 @@ void BasicModel::translate(GLfloat x, GLfloat y, GLfloat z){
         stats[1][i] += y;
         stats[2][i] += z;
     }
-    regenerateVertexBuffer();
+    regenerateVertexBuffer(vertices);
 }
 void BasicModel::scaleCentre(GLfloat scalar){
     for(GLuint i = 0; i < vertexcount; i++){
@@ -212,7 +212,7 @@ void BasicModel::scaleCentre(GLfloat scalar){
         stats[i][0] = stats[i][2] + stats[i][3] / 2;
         stats[i][1] = stats[i][2] - stats[i][3] / 2;
     }
-    regenerateVertexBuffer();
+    regenerateVertexBuffer(vertices);
 }
 void BasicModel::scaleBase(GLfloat scalar){
     for(GLuint i = 0; i < vertexcount; i++){
@@ -226,7 +226,7 @@ void BasicModel::scaleBase(GLfloat scalar){
         stats[i][1] = stats[i][2] - stats[i][3] / 2;
     }
     stats[1][1] += stats[2][3] / 2;
-    regenerateVertexBuffer();
+    regenerateVertexBuffer(vertices);
 } 
 void BasicModel::draw() {
     drawSetup();
@@ -354,7 +354,7 @@ void DispModel::draw(){
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
     scroll();
-    regenerateVertexBuffer();
+    regenerateVertexBuffer(vertices);
 }
 DispModel::~DispModel(){}
 

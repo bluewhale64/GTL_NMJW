@@ -19,6 +19,7 @@
 #include "model.hpp"
 #include "loader.hpp"
 #include "controls.hpp"
+#include "postbox.hpp"
 
 int main(void) {
 
@@ -36,7 +37,7 @@ int main(void) {
 
     glm::mat4 P = glm::perspective(glm::radians(45.0f), Renderer::getAspect(), 0.1f, 100.0f);
     glm::mat4 V = glm::lookAt(
-        glm::vec3(1, 0, -10),  // Camera is at (0,0,0) in World Space
+        glm::vec3(1, 0, -20),  // Camera is at (0,0,0) in World Space
         glm::vec3(1, 0, 10),   // Looks this position - Remeber, +Z is INTO the screen.
         glm::vec3(0, 1, 0));   // Head is up (set to 0,-1,0 to look upside-down)
     glm::mat4 M = glm::mat4(1.0f);
@@ -75,6 +76,35 @@ int main(void) {
     TARDIS.translate(0, -(TARDIS.getSize().y * 0.75), 0);
     GLfloat framenumber = -1.0;
     
+    //Postbox walk demo!
+    GLfloat postbox_default_coords[60] = {
+        //body
+        -0.625, 0.375, 0.00, 0.0000, 0.0,
+         0.625, 0.375, 0.00, 0.3125, 0.0,
+         0.625, 4.375, 0.00, 0.3125, 1.0,
+        -0.625, 4.375, 0.00, 0.0000, 1.0,
+        //foot 1
+        -0.75,  0.00, 0.01, 0.8125, 0.8125,
+         0.00,  0.00, 0.01, 1.0000, 0.8125,
+         0.00,  0.75, 0.01, 1.0000, 1.0000,
+        -0.75,  0.75, 0.01, 0.8125, 1.0000,
+        //foot 2
+        -0.25,  0.00, 0.02, 0.8125, 0.8125,
+         0.50,  0.00, 0.02, 1.0000, 0.8125,
+         0.50,  0.75, 0.02, 1.0000, 1.0000,
+        -0.25,  0.75, 0.02, 0.8125, 1.0000
+    };
+    GLuint postbox_default_indices[18] = {
+        8,9,10,10,11,8,
+        4,5,6,6,7,4,
+        0,1,2,2,3,0
+    };
+    glm::vec3 spawn_location = glm::vec3(1,0,0);
+    Texture PostboxTexture("textures/postbox_spritesheet_nocorner.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
+    Postbox POSTBOX(postbox_default_coords, 60, postbox_default_indices, 18, &PostboxTexture, &TextureShader, &mvp, spawn_location);
+    POSTBOX.setAnimationSpeed(0.5);
+
+
     
     SDL_Event event;
     bool quit = false;
@@ -82,10 +112,13 @@ int main(void) {
         framenumber++; 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Test.draw();
-        TARDIS.draw();
-        TARDIS.translate(0, 0.025 * sin(framenumber/50.0), 0);
-        SDL_GL_SwapWindow(Renderer::getWindow());
+        //TARDIS.draw();
+        //TARDIS.translate(0, 0.025 * sin(framenumber/50.0), 0);
+        
+        POSTBOX.draw();
+        
 
+        SDL_GL_SwapWindow(Renderer::getWindow());
         //Poll Events
         while(SDL_PollEvent(&event)){
             switch (event.type){
