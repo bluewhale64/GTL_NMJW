@@ -3,7 +3,7 @@
 
 /// @brief This anonymous (unnamed) namespace holds the rendering engine flags.
 ///
-/// It can't be accessed by functions written outsie of this file (renderer.cpp).
+/// It can't be accessed by functions written outside of this file (renderer.cpp).
 ///
 /// The functions here can access the data and pass it to code outside this file.
 namespace{
@@ -22,7 +22,7 @@ namespace{
 }
 void Renderer::init(const char* title, int swapinterval, float red, float green, float blue, float alpha) {
     //Initialize the library
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD) != 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD) == false) {
         std::printf("SDL initiation failed.\n");
     }
     std::printf("SDL3 initiated.\n");
@@ -57,12 +57,12 @@ void Renderer::init(const char* title, int swapinterval, float red, float green,
 }        
 void Renderer::toggleFullscreen(){
     if (fullscreen == GL_FALSE){
-        SDL_SetWindowFullscreen(window, SDL_TRUE);
+        SDL_SetWindowFullscreen(window, true);
         SDL_ShowCursor();
         fullscreen = GL_TRUE;
     }
     else{
-        SDL_SetWindowFullscreen(window, SDL_FALSE);
+        SDL_SetWindowFullscreen(window, false);
         SDL_ShowCursor();
         fullscreen = GL_FALSE;
     }

@@ -112,8 +112,8 @@ int main(void) {
         framenumber++; 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Test.draw();
-        //TARDIS.draw();
-        //TARDIS.translate(0, 0.025 * sin(framenumber/50.0), 0);
+        TARDIS.draw();
+        TARDIS.translate(0, 0.025 * sin(framenumber/50.0), 0);
         
         POSTBOX.draw();
         
