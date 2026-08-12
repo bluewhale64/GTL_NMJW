@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 in vec2 UV_coords;
 in vec2 UV_dismap;
 in flat int v_texnum;

@@ -1,4 +1,4 @@
-#version 450 core
+#version 460 core
 in vec2 UV_coords;
 flat in vec4 bounds;
 out vec4 colour;

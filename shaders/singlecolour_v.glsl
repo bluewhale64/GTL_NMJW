@@ -1,4 +1,4 @@
-#version 450 core
+#version 460 core
 layout(location = 0) in vec3 vertexPosition_modelspace;
 uniform vec4 u_colour;
 uniform mat4 MVP;

@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 in vec2 UV_coords;
 flat in int v_texnum;
 out vec4 colour;
