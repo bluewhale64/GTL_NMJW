@@ -1,6 +1,6 @@
 #pragma once
-#include <cstdio>
-#include <GL/glew.h>
+//#include <cstdio>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
@@ -23,7 +23,11 @@ namespace Renderer {
     /// @param green The green colour value for the window background colour. Can be between 0.0 and 1.0 inclusive.
     /// @param blue The blue colour value for the window background colour. Can be between 0.0 and 1.0 inclusive.
     /// @param alpha The opacity value for the window background colour. Can be between 0.0 and 1.0 inclusive.
-    void init(const char* title, int swapinterval, float red, float green, float blue, float alpha);
+    int init(const char* title, int swapinterval, float red, float green, float blue, float alpha);
+    /// @brief Increments the frame number on each frame.
+    void incrementFrameNumber();
+    /// @brief Returns the frame number
+    uint64_t getFrameNumber();
     /// @brief Switches between fullscreen and windowed mode for the display window.
     void toggleFullscreen();
     /// @brief Gets the width of the display window.

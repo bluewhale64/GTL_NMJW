@@ -8,7 +8,7 @@
 
 /// @brief This anonymous (unnamed) namespace holds the type sizes and raw data of loaded assets.
 ///
-/// It can't be accessed by functions written outsie of this file (loader.cpp).
+/// It can't be accessed by functions written outside of this file (loader.cpp).
 ///
 /// The functions here can access the data and pass it to code outside this file.
 namespace {

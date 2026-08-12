@@ -1,19 +1,15 @@
-#define _CRT_SECURE_NO_WARNINGS
 #define STB_IMAGE_IMPLEMENTATION
-#define GLEW_STATIC
+//#define _CRT_SECURE_NO_WARNINGS
+
+#include <SDL3/SDL.h>
 #include <stb/stb_image.h>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <cstdio>
 #include <cstdlib>
 #include <stdarg.h>
 #include <inttypes.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
-#include <SDL3/SDL_gamepad.h>
-#include <SDL3/SDL_joystick.h>
 
 #include "renderer.hpp"
 #include "model.hpp"
@@ -23,8 +19,15 @@
 
 int main(void) {
 
+    //encapsulate this command into Renderer:init()?
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
-    Renderer::init("GTL NMJW", 1, 0.0f, 0.3f, 0.2f, 0.0f);
+    SDL_SetHint("SDL_HINT_VIDEO_DRIVER", "wayland");
+    
+    if (Renderer::init("GTL NMJW", 1, 0.0f, 0.3f, 0.2f, 0.0f) == -1){
+        return -1;
+    }
+
+    //encapsulate this check into Render::init()?
     if (Renderer::getWindow() == nullptr) {
         std::printf("Window Startup Error\n");
         return -1;
@@ -35,6 +38,7 @@ int main(void) {
     //make a controller class?
     controller = Controls::findExistingGamepad();
 
+    //make a camera setup function to clean up this mess
     glm::mat4 P = glm::perspective(glm::radians(45.0f), Renderer::getAspect(), 0.1f, 100.0f);
     glm::mat4 V = glm::lookAt(
         glm::vec3(1, 0, -20),  // Camera is at (0,0,0) in World Space
@@ -74,7 +78,7 @@ int main(void) {
     glDisable(GL_CULL_FACE);
     
     TARDIS.translate(0, -(TARDIS.getSize().y * 0.75), 0);
-    GLfloat framenumber = -1.0;
+    
     
     //Postbox walk demo!
     GLfloat postbox_default_coords[60] = {
@@ -109,16 +113,32 @@ int main(void) {
     SDL_Event event;
     bool quit = false;
     while (quit == false) {
-        framenumber++; 
+        // Loop process overview:
+
+        // 1. increment frame count
+        Renderer::incrementFrameNumber();
+        float currentframe = (float)Renderer::getFrameNumber();
+
+        // 2. Clear colour and depth buffers.
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // 3. Draw all currently active objects.
         Test.draw();
         TARDIS.draw();
-        TARDIS.translate(0, 0.025 * sin(framenumber/50.0), 0);
+        //TARDIS.translate(0, 0.025 * sin(currentframe/50.0), 0);
         
         POSTBOX.draw();
-        
 
+        // 4. Swap windows. 
         SDL_GL_SwapWindow(Renderer::getWindow());
+        // 5. Poll events.
+        // 6. Pass events into control system.
+        //      Needs integration with control system
+        // 7. Act on control inputs, such as toggling fullscreen or moving models.
+        // 8. Apply model transformations.
+        //      Needs a list of active objects
+        
+        
         //Poll Events
         while(SDL_PollEvent(&event)){
             switch (event.type){
@@ -134,7 +154,16 @@ int main(void) {
                     std::printf("Controller activated.\n");
                 }
                 break;
+            case SDL_EVENT_KEY_UP:
+                if (event.key.type == SDLK_ESCAPE) {
+                    quit = true;
+                }
+                break;
+            default:
+                break;
+            /*
             case SDL_EVENT_GAMEPAD_AXIS_MOTION:
+
                 if(event.gaxis.axis != SDL_GAMEPAD_AXIS_INVALID){
                     Controls::setAxis(event.gaxis.axis, event.gaxis.value);
                 }
@@ -153,10 +182,11 @@ int main(void) {
                 //break;
             //wait until stable release
             //necessary function implementations do not exist
+            */
             }
         }
         //End of Event Polling
-        
+        /*
         if(Controls::getButton(SDL_GAMEPAD_BUTTON_WEST)){
             TARDIS.translate(0.01, 0, 0);
         }
@@ -169,10 +199,12 @@ int main(void) {
         if(Controls::getButton(SDL_GAMEPAD_BUTTON_SOUTH)){
             TARDIS.translate(0, 0, -0.01);
         }
+        */
         //update control flags right at the end of the main loop
         Controls::updateFlags();
+        printf("Completed Frame %lu\n", Renderer::getFrameNumber());
     }
-    SDL_CloseGamepad(controller);
+    //SDL_CloseGamepad(controller);
     Renderer::stop();
     Loader::stop();
     std::printf("GTL_NMJW closed.\n");

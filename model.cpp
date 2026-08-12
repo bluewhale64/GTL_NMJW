@@ -1,5 +1,5 @@
 #include "model.hpp"
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <stb/stb_image.h>
 #include <inttypes.h>
@@ -26,7 +26,7 @@ GLuint Shader::getShader(){
 GLint Shader::getUniformLocation(const char* uniformname) {
     GLint location = glGetUniformLocation(program, uniformname);
     if (location == -1) {
-        std::printf("WARNING: Uniform \"%s\" does not exist!\n", (char*)uniformname);
+        printf("WARNING: Uniform \"%s\" does not exist!\n", (char*)uniformname);
     }
     return location;
 }
@@ -51,15 +51,15 @@ unsigned int Shader::compile(const char* source, unsigned int type, const char* 
             glGetShaderiv(id, GL_INFO_LOG_LENGTH, &len);
             char* message = (char*)malloc(len * sizeof(char));
             glGetShaderInfoLog(id, len, &len, message);
-            std::printf("%s failed to compile!\n", shadername);
-            std::printf("%s\n", message);
+            printf("%s failed to compile!\n", shadername);
+            printf("%s\n", message);
             glDeleteShader(id);
             return 0;
         }
         return id;
     }
     else {
-        std::printf("Shader %s failed to generate.\n", shadername);
+        printf("Shader %s failed to generate.\n", shadername);
         return -1;
     }
 }
@@ -78,12 +78,12 @@ const char* Shader::parse(const char* filepath) {
             return(shadercode);
         }
         else {
-            std::printf("const char* array shadercode could not be allocated memory, and was a nullptr pointer.\n");
+            printf("const char* array shadercode could not be allocated memory, and was a nullptr pointer.\n");
             return(nullptr);
         }
     }
     else {
-        std::printf("Shader file %s could not be found/opened.", filepath);
+        printf("Shader file %s could not be found/opened.", filepath);
         return nullptr;
     }
 }
@@ -96,7 +96,7 @@ Texture::Texture(const char* imagefile, GLint texture_mag_filter, GLint texture_
     stbi_set_flip_vertically_on_load(1);
     unsigned char* localbuffer = stbi_load(imagefile, &width, &height, &bpp, 4);
     if (!localbuffer) {
-        std::printf("Image file %s could not be found or opened.\n", imagefile);
+        printf("Image file %s could not be found or opened.\n", imagefile);
     }
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);

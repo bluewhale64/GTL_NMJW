@@ -1,6 +1,6 @@
 #pragma once
-#include <cstdio>
-#include <GL/glew.h>
+//#include <cstdio>
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <inttypes.h>
 #include "model.hpp"

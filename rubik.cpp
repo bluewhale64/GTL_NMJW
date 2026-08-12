@@ -1,6 +1,7 @@
 #include "rubik.hpp"
 #include "model.hpp"
-#include "renderer.hpp"
+//#include "renderer.hpp"
+#include "model.hpp"
 #include <inttypes.h>
 #include <GL/gl.h>
 

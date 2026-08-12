@@ -1,5 +1,21 @@
 #include "renderer.hpp"
-#include <GL/glew.h>
+#include <glad/glad.h>
+#include <cstdio>
+
+// TO DO: Make proper render loop
+// Loop process overview:
+        // 1. increment frame count
+        // 2. Clear colour and depth buffers.
+        // 3. Draw all currently active objects.
+        // 4. Swap windows. 
+        // 5. Poll events.
+        // 6. Pass events into control system.
+        //      Needs integration with control system
+        // 7. Act on control inputs, such as toggling fullscreen or moving models.
+        // 8. Apply model transformations.
+        //      Needs a list of active objects
+
+
 
 /// @brief This anonymous (unnamed) namespace holds the rendering engine flags.
 ///
@@ -19,29 +35,37 @@ namespace{
     GLboolean fullscreen = GL_FALSE;
     /// @brief A pointer to the SDL window used by the application.
     SDL_Window* window;
+    /// @brief Zero-indexed frame counter (unsigned 64-bit integer).
+    uint64_t framenumber;
 }
-void Renderer::init(const char* title, int swapinterval, float red, float green, float blue, float alpha) {
+int Renderer::init(const char* title, int swapinterval, float red, float green, float blue, float alpha) {
     //Initialize the library
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD) == false) {
-        std::printf("SDL initiation failed.\n");
+        printf("SDL initiation failed.\n");
+        return -1;
     }
-    std::printf("SDL3 initiated.\n");
+    printf("SDL3 initiated.\n");
     fullscreen = GL_FALSE;
     displayid = SDL_GetPrimaryDisplay();
     displaymode = SDL_GetDesktopDisplayMode(displayid);
     window = SDL_CreateWindow(title, displaymode->w, displaymode->h, SDL_WINDOW_OPENGL);
     if (window == nullptr) {
-        std::printf("Failed to create SDL3 window.\n");
+        printf("Failed to create SDL3 window.\n");
         SDL_Quit();
+        return -1;
     }
-    context = SDL_GL_CreateContext(window);
-    SDL_GL_SetSwapInterval(swapinterval);
-
-    if (glewInit() != GLEW_OK) {
-        std::printf("Failed to initialise GLEW.\n");
+    
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+    context = SDL_GL_CreateContext(window); //Put this after the SDL_GL_SetAttribute to actually apply the settings
+    SDL_GL_SetSwapInterval(swapinterval); //Needs a context to exist to apply the setting
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        printf("Failed to initialize GLAD\n");
         SDL_Quit();
-    }
-    std::printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+        return -1;
+    } 
+    printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
@@ -54,7 +78,17 @@ void Renderer::init(const char* title, int swapinterval, float red, float green,
     glFrontFace(GL_CW);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+
+    // framenumber is incremented at the start of each loop so this creates zero-indexing.
+    framenumber = UINT64_MAX;
+    return 0;
 }        
+void Renderer::incrementFrameNumber(){
+    framenumber++;
+}
+uint64_t Renderer::getFrameNumber(){
+    return framenumber;
+}
 void Renderer::toggleFullscreen(){
     if (fullscreen == GL_FALSE){
         SDL_SetWindowFullscreen(window, true);
