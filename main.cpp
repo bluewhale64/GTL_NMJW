@@ -5,7 +5,7 @@
 #include <stb/stb_image.h>
 #include <glad/glad.h>
 #include <cstdio>
-#include <cstdlib>
+//#include <cstdlib>
 #include <stdarg.h>
 #include <inttypes.h>
 #include <glm/glm.hpp>
@@ -125,7 +125,7 @@ int main(void) {
         // 3. Draw all currently active objects.
         Test.draw();
         TARDIS.draw();
-        //TARDIS.translate(0, 0.025 * sin(currentframe/50.0), 0);
+        TARDIS.translate(0, 0.025 * sin(currentframe/50.0), 0);
         
         POSTBOX.draw();
 
@@ -202,7 +202,6 @@ int main(void) {
         */
         //update control flags right at the end of the main loop
         Controls::updateFlags();
-        printf("Completed Frame %lu\n", Renderer::getFrameNumber());
     }
     //SDL_CloseGamepad(controller);
     Renderer::stop();

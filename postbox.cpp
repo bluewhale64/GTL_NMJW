@@ -1,6 +1,6 @@
 #include "postbox.hpp"
 #include <cmath>
-#include <cstring>
+//#include <cstring>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <stb/stb_image.h>
@@ -23,8 +23,9 @@ void Postbox::walkAnimationTransform(){
 }
 void Postbox::idleAnimationTransform(){
     //make copy of model vertices and copy the standard vertices in
-    GLfloat* transformed_vertices = (GLfloat*) malloc(floatnum * sizeof(GLfloat));
-    std::memcpy(transformed_vertices, vertices, floatnum * sizeof(GLfloat));
+
+    //GLfloat* transformed_vertices = (GLfloat*) malloc(floatnum * sizeof(GLfloat));
+    //std::memcpy(transformed_vertices, vertices, floatnum * sizeof(GLfloat));
     
     //rotate shoes, lift postbox a little
     //centres of rotation
@@ -35,53 +36,63 @@ void Postbox::idleAnimationTransform(){
     //60 can be replaced with framerate
     float framerate = 60;
     float maximumAngleDeg = 20; //degrees
-    float periodFunction = 0.5 * (cos(M_PI * ((2 * animationSpeed * animationProgress) - framerate) / framerate) + 1);
+    float periodScalar = 0.05;
+    float periodFunction = periodScalar * cos(M_PI * 2 * animationSpeed * animationProgress / framerate);
     //animationProgress effectively functions as the x axis of a time graph.
     float angleRad = maximumAngleDeg * periodFunction * M_PI / 180.0f;
-    float postboxRaise = periodFunction * 0.25;
+    float postboxRaise = periodFunction * 0.5;
     //BEWARE: you may need to make the angle negative.
     
-    GLfloat x, y, new_x, new_y;
+    GLfloat x, y, new_x, new_y = 0;
     //box body - i+0
     for(int i = 0; i < 4; i++){
-        transformed_vertices[stride * (i + 0) + 1] += new_y + postboxRaise;
+        vertices[stride * (i + 0) + 1] += postboxRaise;
     }
     //first shoe - i+4
     for(int i = 0; i < 4; i++){
         //subtract anchorpoint from each coordinate in section
-        x = transformed_vertices[stride * (i + 4) + 0] - anchorPoint_1.x;
-        y = transformed_vertices[stride * (i + 4) + 1] - anchorPoint_1.y;
+        x = vertices[stride * (i + 4) + 0] - anchorPoint_1.x;
+        y = vertices[stride * (i + 4) + 1] - anchorPoint_1.y;
         //rotate by modulated sine
         new_x = (x * cos(angleRad)) - (y * sin(angleRad));
         new_y = (x * sin(angleRad)) + (y * cos(angleRad));
         //add anchorpoint
-        transformed_vertices[stride * (i + 4) + 0] = new_x + anchorPoint_1.x;
-        transformed_vertices[stride * (i + 4) + 1] = new_y + anchorPoint_1.y;
+        vertices[stride * (i + 4) + 0] = new_x + anchorPoint_1.x;
+        vertices[stride * (i + 4) + 1] = new_y + anchorPoint_1.y;
     }
     //second shoe - i+8
     for(int i = 0; i < 4; i++){
         //subtract anchorpoint from each coordinate in section
-        x = transformed_vertices[stride * (i + 8) + 0] - anchorPoint_2.x;
-        y = transformed_vertices[stride * (i + 8) + 1] - anchorPoint_2.y;
+        x = vertices[stride * (i + 8) + 0] - anchorPoint_2.x;
+        y = vertices[stride * (i + 8) + 1] - anchorPoint_2.y;
         //rotate by modulated sine
         new_x = (x * cos(angleRad)) - (y * sin(angleRad));
         new_y = (x * sin(angleRad)) + (y * cos(angleRad));
         //add anchorpoint
-        transformed_vertices[stride * (i + 8) + 0] = new_x + anchorPoint_2.x;
-        transformed_vertices[stride * (i + 8) + 1] = new_y + anchorPoint_2.y;
+        vertices[stride * (i + 8) + 0] = new_x + anchorPoint_2.x;
+        vertices[stride * (i + 8) + 1] = new_y + anchorPoint_2.y;
     }
 
     //add current position to all coordinates
     //stolen from underlying BasicModel::translate() to act on the transformed vertices
     //I can add a decent fix later
+
+    //making a new set of transformed vertices every frame crashed the program
+    //so the raw vertices are edited by the animation
+    //this means the position must NOT be added every frame.
+    /*
     for(GLuint i = 0; i < vertexcount; i++){
-        transformed_vertices[stride * i + 0] += position.x;
-        transformed_vertices[stride * i + 1] += position.y;
-        transformed_vertices[stride * i + 2] += position.z;
+        vertices[stride * i + 0] += position.x;
+        vertices[stride * i + 1] += position.y;
+        vertices[stride * i + 2] += position.z;
     }
+    */
     //then load into the vertex buffer
-    regenerateVertexBuffer(transformed_vertices);
-    free(transformed_vertices); //this might be causing issues
+    regenerateVertexBuffer(vertices);
+
+    //regenerateVertexBuffer(transformed_vertices);
+    //free(transformed_vertices); //this might be causing issues
+    
     //mallocing and freeing a bulk of floats every frame is probably less than efficient.
     //that said, it's 2am and I just want this to work.
     animationProgress++;
