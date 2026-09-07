@@ -3,7 +3,8 @@
 //#include "renderer.hpp"
 #include "model.hpp"
 #include <inttypes.h>
-#include <GL/gl.h>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 
 //make float arrays for the positions to prevent constructor error
 Rubik::Rubik(uint8_t* rgb6, GLfloat x, GLfloat y, GLfloat z, Texture* picture, Shader* modelshader, glm::mat4* mvp) : SingleTextureModel({-0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f,  0.5f, 0.5f, 0.75f, 0.5f, -0.5f,  0.5f, 0.0f, 0.75f, -0.5f,  0.5f,  0.5f, 0.5f, 0.5f, 0.5f,  0.5f,  0.5f, 0.0f, 0.5f, -0.5f,  0.5f, -0.5f, 0.5f, 0.25f, 0.5f,  0.5f, -0.5f, 0.0f, 0.25f, -0.5f,  0.5f,  -0.5f, 1.0f, 0.5f, -0.5f, -0.5f,  -0.5f, 1.0f, 0.75f, 0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  0.5f, 1.0f, 0.75f, 0.5f,  0.5f, -0.5f, 0.5f, 0.75f}, 70, {0,1,2,1,3,2,2,3,4,3,5,4,4,5,6,5,7,6,6,7,0,7,1,0,2,4,8,8,9,2,10,11,12,12,13,10}, 36, nullptr, modelshader, mvp){

@@ -3,7 +3,8 @@
 
 #include <SDL3/SDL.h>
 #include <stb/stb_image.h>
-#include <glad/glad.h>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 #include <cstdio>
 //#include <cstdlib>
 #include <stdarg.h>

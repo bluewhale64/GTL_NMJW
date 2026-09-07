@@ -1,7 +1,8 @@
 #include "postbox.hpp"
 #include <cmath>
 //#include <cstring>
-#include <glad/glad.h>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 #include <glm/glm.hpp>
 #include <stb/stb_image.h>
 #include <inttypes.h>

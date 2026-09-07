@@ -1,5 +1,6 @@
 #pragma once
-#include <GL/gl.h>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 #include <inttypes.h>
 #include <cstdio>
 

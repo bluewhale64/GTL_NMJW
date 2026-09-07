@@ -1,6 +1,7 @@
 #pragma once
 //#include <cstdio>
-#include <glad/glad.h>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 #include <glm/glm.hpp>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>

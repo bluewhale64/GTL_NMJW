@@ -1,7 +1,8 @@
 #pragma once
 #include "model.hpp"
 #include "renderer.hpp"
-#include <GL/gl.h>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 
 /// @brief #include "rubik.hpp"
 ///

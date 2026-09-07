@@ -1,5 +1,6 @@
 #include "renderer.hpp"
-#include <glad/glad.h>
+#include <epoxy/gl.h>
+#include <epoxy/glx.h>
 #include <cstdio>
 
 // TO DO: Make proper render loop
@@ -60,11 +61,13 @@ int Renderer::init(const char* title, int swapinterval, float red, float green, 
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
     context = SDL_GL_CreateContext(window); //Put this after the SDL_GL_SetAttribute to actually apply the settings
     SDL_GL_SetSwapInterval(swapinterval); //Needs a context to exist to apply the setting
+    /*
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
         printf("Failed to initialize GLAD\n");
         SDL_Quit();
         return -1;
-    } 
+    }
+    */
     printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
