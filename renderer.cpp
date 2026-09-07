@@ -1,7 +1,4 @@
 #include "renderer.hpp"
-#include <epoxy/gl.h>
-#include <epoxy/glx.h>
-#include <cstdio>
 
 // TO DO: Make proper render loop
 // Loop process overview:

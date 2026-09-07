@@ -1,5 +1,8 @@
 #pragma once
-#include <SDL3/SDL_gamepad.h>
+#include <cstdio>
+#include <cstring>
+#include <inttypes.h>
+#include <SDL3/SDL.h>
 
 /// @brief #include "controls.hpp"
 ///

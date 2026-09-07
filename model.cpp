@@ -1,9 +1,5 @@
 #include "model.hpp"
-#include <epoxy/gl.h>
-#include <epoxy/glx.h>
-#include <glm/glm.hpp>
 #include <stb/stb_image.h>
-#include <inttypes.h>
 
 Shader::Shader(const char* VertexShader, const char* FragmentShader) {
     unsigned int vertexshader = compile(parse(VertexShader), GL_VERTEX_SHADER, VertexShader);

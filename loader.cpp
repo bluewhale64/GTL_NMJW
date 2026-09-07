@@ -1,11 +1,4 @@
 #include "loader.hpp"
-#include <epoxy/gl.h>
-#include <epoxy/glx.h>
-#include <inttypes.h>
-#include <cstdio>
-#include <cstdlib>
-#include <stdarg.h>
-#include <cstring>
 
 /// @brief This anonymous (unnamed) namespace holds the type sizes and raw data of loaded assets.
 ///

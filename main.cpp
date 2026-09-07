@@ -1,12 +1,11 @@
 #define STB_IMAGE_IMPLEMENTATION
-//#define _CRT_SECURE_NO_WARNINGS
+#include <stb/stb_image.h>
 
 #include <SDL3/SDL.h>
-#include <stb/stb_image.h>
 #include <epoxy/gl.h>
 #include <epoxy/glx.h>
 #include <cstdio>
-//#include <cstdlib>
+#include <cstdlib>
 #include <stdarg.h>
 #include <inttypes.h>
 #include <glm/glm.hpp>

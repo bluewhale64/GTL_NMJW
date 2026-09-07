@@ -1,11 +1,4 @@
 #include "postbox.hpp"
-#include <cmath>
-//#include <cstring>
-#include <epoxy/gl.h>
-#include <epoxy/glx.h>
-#include <glm/glm.hpp>
-#include <stb/stb_image.h>
-#include <inttypes.h>
 
 Postbox::Postbox(GLfloat* vertices_in, GLuint number_of_floats, GLuint* indices_in, GLuint number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp, glm::vec3 spawn_location) : SingleTextureModel(vertices_in, number_of_floats, indices_in, number_of_indices, picture, modelshader, mvp){
     animationSpeed = 1.0;

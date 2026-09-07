@@ -1,8 +1,9 @@
 #pragma once
 #include "model.hpp"
-#include "renderer.hpp"
+#include <cstring>
 #include <epoxy/gl.h>
 #include <epoxy/glx.h>
+#include <inttypes.h>
 
 /// @brief #include "rubik.hpp"
 ///

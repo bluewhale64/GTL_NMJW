@@ -1,8 +1,5 @@
 #include "controls.hpp"
-#include <inttypes.h>
-#include <cstring>
-#include <cstdio>
-#include <SDL3/SDL_main.h>
+
 
 /// @brief This anonymous (unnamed) namespace holds the arrays of controller states.
 ///

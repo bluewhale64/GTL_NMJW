@@ -3,6 +3,9 @@
 #include <epoxy/glx.h>
 #include <inttypes.h>
 #include <cstdio>
+#include <cstdlib>
+#include <stdarg.h>
+#include <cstring>
 
 /// @brief #include "loader.hpp"
 ///

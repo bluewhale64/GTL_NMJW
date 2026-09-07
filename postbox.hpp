@@ -1,5 +1,5 @@
 #pragma once
-//#include <cstdio>
+#include <cmath>
 #include <epoxy/gl.h>
 #include <epoxy/glx.h>
 #include <glm/glm.hpp>
