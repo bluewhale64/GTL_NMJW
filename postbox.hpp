@@ -6,9 +6,11 @@
 #include <inttypes.h>
 #include "model.hpp"
 
+using namespace glm;
+
 class Postbox : public SingleTextureModel {
     private:
-        glm::vec3 position;
+        vec3 position;
         int animationState; //0 for idle, 1 for walk
         float animationSpeed; //how fast to cycle through the animation - default 1.0 = 1 loop per 60 frames
         int animationProgress; //check where the animation was on the previous frame

@@ -1,14 +1,14 @@
 #include "postbox.hpp"
 
-Postbox::Postbox(GLfloat* vertices_in, GLuint number_of_floats, GLuint* indices_in, GLuint number_of_indices, Texture* picture, Shader* modelshader, glm::mat4* mvp, glm::vec3 spawn_location) : SingleTextureModel(vertices_in, number_of_floats, indices_in, number_of_indices, picture, modelshader, mvp){
+Postbox::Postbox(GLfloat* vertices_in, GLuint number_of_floats, GLuint* indices_in, GLuint number_of_indices, Texture* picture, Shader* modelshader, mat4* mvp, vec3 spawn_location) : SingleTextureModel(vertices_in, number_of_floats, indices_in, number_of_indices, picture, modelshader, mvp){
     animationSpeed = 1.0;
     animationState = 0; //idle by default
     animationProgress = 0;
     position = spawn_location;
 }
 void Postbox::walkAnimationTransform(){
-    glm::vec3 anchorPoint_1 = glm::vec3(1, 0, -10);
-    glm::vec3 anchorPoint_2 = glm::vec3(1, 0, -10);
+    vec3 anchorPoint_1 = vec3(1, 0, -10);
+    vec3 anchorPoint_2 = vec3(1, 0, -10);
     //choose anchor points for the shoes
     //make a copy of the coordinates, apply the transformation, then give these transformed coordinates to the vertex buffer.
     //apply speed and record previous state
@@ -23,8 +23,8 @@ void Postbox::idleAnimationTransform(){
     
     //rotate shoes, lift postbox a little
     //centres of rotation
-    glm::vec3 anchorPoint_1 = glm::vec3(-0.6875,  0.0625, 0.01); //first shoe anchorpoint
-    glm::vec3 anchorPoint_2 = glm::vec3(-0.1875,  0.0625, 0.02); //second shoe anchorpoint
+    vec3 anchorPoint_1 = vec3(-0.6875,  0.0625, 0.01); //first shoe anchorpoint
+    vec3 anchorPoint_2 = vec3(-0.1875,  0.0625, 0.02); //second shoe anchorpoint
 
     //set maximum angle to 22deg
     //60 can be replaced with framerate

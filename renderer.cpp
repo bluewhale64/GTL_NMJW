@@ -37,7 +37,9 @@ namespace{
     uint64_t framenumber;
 }
 int Renderer::init(const char* title, int swapinterval, float red, float green, float blue, float alpha) {
-    //Initialize the library
+    //Initialize the library after setting appropriate hints
+    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+    SDL_SetHint("SDL_HINT_VIDEO_DRIVER", "wayland");
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD) == false) {
         printf("SDL initiation failed.\n");
         return -1;
@@ -52,19 +54,13 @@ int Renderer::init(const char* title, int swapinterval, float red, float green, 
         SDL_Quit();
         return -1;
     }
-    
+
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 4 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 6 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
     context = SDL_GL_CreateContext(window); //Put this after the SDL_GL_SetAttribute to actually apply the settings
     SDL_GL_SetSwapInterval(swapinterval); //Needs a context to exist to apply the setting
-    /*
-    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        printf("Failed to initialize GLAD\n");
-        SDL_Quit();
-        return -1;
-    }
-    */
+
     printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

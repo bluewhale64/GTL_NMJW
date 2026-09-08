@@ -12,24 +12,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "renderer.hpp"
+#include "shader.hpp"
+#include "texture.hpp"
 #include "model.hpp"
 #include "loader.hpp"
 #include "controls.hpp"
 #include "postbox.hpp"
 
-int main(void) {
+using namespace glm;
 
-    //encapsulate this command into Renderer:init()?
-    SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
-    SDL_SetHint("SDL_HINT_VIDEO_DRIVER", "wayland");
+int main(void) {
     
     if (Renderer::init("GTL NMJW", 1, 0.0f, 0.3f, 0.2f, 0.0f) == -1){
-        return -1;
-    }
-
-    //encapsulate this check into Render::init()?
-    if (Renderer::getWindow() == nullptr) {
-        std::printf("Window Startup Error\n");
         return -1;
     }
 
@@ -39,13 +33,13 @@ int main(void) {
     controller = Controls::findExistingGamepad();
 
     //make a camera setup function to clean up this mess
-    glm::mat4 P = glm::perspective(glm::radians(45.0f), Renderer::getAspect(), 0.1f, 100.0f);
-    glm::mat4 V = glm::lookAt(
-        glm::vec3(1, 0, -20),  // Camera is at (0,0,0) in World Space
-        glm::vec3(1, 0, 10),   // Looks this position - Remeber, +Z is INTO the screen.
-        glm::vec3(0, 1, 0));   // Head is up (set to 0,-1,0 to look upside-down)
-    glm::mat4 M = glm::mat4(1.0f);
-    glm::mat4 mvp = P * V * M; // Remember, matrix multiplication is the other way around
+    mat4 P = perspective(radians(45.0f), Renderer::getAspect(), 0.1f, 100.0f);
+    mat4 V = lookAt(
+        vec3(1, 0, -20),  // Camera is at (0,0,0) in World Space
+        vec3(1, 0, 10),   // Looks this position - Remeber, +Z is INTO the screen.
+        vec3(0, 1, 0));   // Head is up (set to 0,-1,0 to look upside-down)
+    mat4 M = mat4(1.0f);
+    mat4 mvp = P * V * M; // Remember, matrix multiplication is the other way around
     
     GLuint basicindices[6] = { 0,1,2,2,3,0 };
     GLfloat keycorners[24] = {
@@ -103,7 +97,7 @@ int main(void) {
         4,5,6,6,7,4,
         0,1,2,2,3,0
     };
-    glm::vec3 spawn_location = glm::vec3(1,0,0);
+    vec3 spawn_location = vec3(1,0,0);
     Texture PostboxTexture("textures/postbox_spritesheet_nocorner.png", GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT, nullptr);
     Postbox POSTBOX(postbox_default_coords, 60, postbox_default_indices, 18, &PostboxTexture, &TextureShader, &mvp, spawn_location);
     POSTBOX.setAnimationSpeed(0.5);

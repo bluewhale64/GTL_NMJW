@@ -1,5 +1,6 @@
 build/
 dev-assets/
 extern-textures/
+*.directory
 GTL_NMJW
 keyboard.txt

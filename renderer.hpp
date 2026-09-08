@@ -2,13 +2,14 @@
 #include <cstdio>
 #include <epoxy/gl.h>
 #include <epoxy/glx.h>
-#include <glm/glm.hpp>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 
 /// @brief #include "renderer.hpp"
 ///
 /// Holds various functions and variables for information about the output rendering engine.
+///
+/// A namespace is used for the renderer instead of a class because there should only be one instance of the renderer in use.
 namespace Renderer {
     /// @brief 
     /// @param title A string containing the name of the window.
